@@ -74,7 +74,8 @@ fun seconds(hours: Int, minutes: Int, seconds: Int): Int = hours * 3600 + minute
  * Определить длину того же отрезка в метрах (в данном случае 18.98).
  * 1 сажень = 3 аршина = 48 вершков, 1 вершок = 4.445 см.
  */
-fun lengthInMeters(sagenes: Int, arshins: Int, vershoks: Int): Double = (sagenes * 48 + arshins * 16 + vershoks) * 4.445 / 100
+fun lengthInMeters(sagenes: Int, arshins: Int, vershoks: Int): Double =
+    (sagenes * 48 + arshins * 16 + vershoks) * 4.445 / 100
 
 /**
  * Тривиальная (1 балл)
@@ -86,8 +87,7 @@ fun angleInRadian(deg: Int, min: Int, sec: Int): Double {
     val mins = min.toDouble()
     val secs = sec.toDouble()
     val sum = deg + mins / 60 + secs / 3600
-    val rad = (sum * PI) / 180
-    return rad
+    return (sum * PI) / 180
 }
 
 /**
@@ -99,8 +99,7 @@ fun angleInRadian(deg: Int, min: Int, sec: Int): Double {
 fun trackLength(x1: Double, y1: Double, x2: Double, y2: Double): Double {
     val xdif = max(x1, x2) - min(x1, x2)
     val ydif = max(y1, y2) - min(y1, y2)
-    val dif = sqrt(ydif * ydif + xdif * xdif)
-    return dif
+    return sqrt(ydif * ydif + xdif * xdif)
 }
 
 /**
