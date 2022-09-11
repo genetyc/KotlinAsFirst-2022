@@ -157,7 +157,13 @@ fun center(list: MutableList<Double>): MutableList<Double> {
  * представленные в виде списков a и b. Скалярное произведение считать по формуле:
  * C = a1b1 + a2b2 + ... + aNbN. Произведение пустых векторов считать равным 0.
  */
-fun times(a: List<Int>, b: List<Int>): Int = TODO()
+fun times(a: List<Int>, b: List<Int>): Int {
+    var su: Int = 0
+    for (i in 0 until a.size) {
+        su += a[i] * b[i]
+    }
+    return su
+}
 
 /**
  * Средняя (3 балла)
@@ -167,7 +173,26 @@ fun times(a: List<Int>, b: List<Int>): Int = TODO()
  * Коэффициенты многочлена заданы списком p: (p0, p1, p2, p3, ..., pN).
  * Значение пустого многочлена равно 0 при любом x.
  */
-fun polynom(p: List<Int>, x: Int): Int = TODO()
+fun polynom(p: List<Int>, x: Int): Int {
+    var su:Int = 0
+    fun pow(x: Int, n: Int): Int {
+        var xpowd: Int = 1
+        for (i in 1..n) {
+            xpowd*=x
+        }
+        return xpowd
+    }
+    return when {
+        (p.size == 0) -> 0
+        (p.size == 1) -> p[0]
+        else -> {
+            for (i in 1..p.size) {
+                su += p[i-1]*pow(x, i-1)
+            }
+            return su
+        }
+    }
+}
 
 /**
  * Средняя (3 балла)
@@ -180,7 +205,26 @@ fun polynom(p: List<Int>, x: Int): Int = TODO()
  * Обратите внимание, что данная функция должна изменять содержание списка list, а не его копии.
  */
 fun accumulate(list: MutableList<Int>): MutableList<Int> = TODO()
-
+/*
+{
+    return when {
+        (list.size == 0) || (list.size == 1) -> list
+        else -> {
+            val list1: MutableList<Int> = mutableListOf(1,2,3,4)
+            val ls2: MutableList<Int> = mutableListOf()
+            for (i in 1 .. list1.size) {
+                //val ls = list1.subList(0,i)
+                //println(ls.sum())
+                ls2.add(list1.subList(0,i).sum())
+            }
+            for (i in 0 until ls2.size) {
+                list1[i] = ls2[i]
+            }
+            return list1
+        }
+    }
+}
+*/
 /**
  * Средняя (3 балла)
  *

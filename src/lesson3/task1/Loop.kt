@@ -75,13 +75,13 @@ fun digitCountInNumber(n: Int, m: Int): Int =
 fun digitNumber(n: Int): Int {
     var count = 0
     var numb = n
-    if (n == 0) return 1 else {
+    if (n.toString().length == 1) return 1 else {
         while (numb > 0) {
             count++
             numb /= 10
         }
-        return count
     }
+    return count
 }
 
 /**
@@ -92,7 +92,7 @@ fun digitNumber(n: Int): Int {
  */
 fun fib(n: Int): Int {
     var fCurrent = 1
-    var fPrev = 1
+    var fPrev: Int
     var sum = 2
     for (i in 4..n) {
         fPrev = fCurrent
@@ -113,7 +113,7 @@ fun fib(n: Int): Int {
  */
 fun minDivisor(n: Int): Int {
     var div: Int = n
-    for (i in 2..n) {
+    for (i in 2..n / 2 + 1) {
         if (n % i == 0) {
             if (i < div) div = i else continue
         }
@@ -128,7 +128,7 @@ fun minDivisor(n: Int): Int {
  */
 fun maxDivisor(n: Int): Int {
     var divis: Int = -1
-    for (i in 1..(n / 2 + 1).toInt()) {
+    for (i in 1..(n / 2)) {
         if (n % i == 0) divis = maxOf(i, divis)
     }
     return divis
@@ -158,8 +158,8 @@ fun collatzSteps(x: Int): Int {
             if (numb % 2 == 0) numb /= 2 else numb = numb * 3 + 1
             count++
         }
-        return count
     }
+    return count
 }
 
 /**
@@ -185,20 +185,20 @@ fun lcm(m: Int, n: Int): Int {
  * Например, 25 и 49 взаимно простые, а 6 и 8 -- нет.
  */
 fun isCoPrime(m: Int, n: Int): Boolean {
-    var l1: List<Int> = mutableListOf()
-    var l2: List<Int> = mutableListOf()
+    val l1: MutableList<Int> = mutableListOf()
+    val l2: MutableList<Int> = mutableListOf()
     for (i in 1..n) {
-        if (n % i == 0) l1 += i else continue
+        if (n % i == 0) l1.add(i) else continue
     }
     for (j in 2..m) {
-        if (m % j == 0) l2 += j else continue
+        if (m % j == 0) l2.add(j) else continue
     }
-    var se = setOf<Int>()
+    val se: MutableSet<Int> = mutableSetOf()
     for (i in l1) {
-        se += i
+        se.add(i)
     }
     for (j in l2) {
-        se += j
+        se.add(j)
     }
     return (se.size) == (l1.size + l2.size)
 }
@@ -213,10 +213,10 @@ fun isCoPrime(m: Int, n: Int): Boolean {
 fun revert(n: Int): Int {
     var pod = n
     var slovo = ""
-    var nasd: List<Int> = mutableListOf()
+    val nasd: MutableList<Int> = mutableListOf()
     val len = n.toString().length
     for (i in 1..len) {
-        nasd += (pod % 10)
+        nasd.add(pod % 10)
         pod /= 10
     }
     for (i in nasd) {
@@ -240,7 +240,7 @@ fun isPalindrome(n: Int): Boolean {
     val nasd = mutableListOf<String>()
     val len = n.toString().length
     for (i in 1..len) {
-        nasd.add(((pod % 10).toInt()).toString())
+        nasd.add(((pod % 10)).toString())
         pod /= 10
     }
     for (i in nasd) {
@@ -298,14 +298,14 @@ fun cos(x: Double, eps: Double): Double = TODO()
  * Использовать операции со строками в этой задаче запрещается.
  */
 fun squareSequenceDigit(n: Int): Int {
-    var listSq: List<Int> = mutableListOf()
-    var list2: List<String> = mutableListOf()
+    val listSq: MutableList<Int> = mutableListOf()
+    val list2: MutableList<String> = mutableListOf()
     for (i in 1..n + 1) {
-        listSq += i * i
+        listSq.add(i * i)
     }
     for (i in listSq) {
         for (j in i.toString()) {
-            list2 += j.toString()
+            list2.add(j.toString())
         }
     }
     return list2[n - 1].toInt()
@@ -322,10 +322,10 @@ fun squareSequenceDigit(n: Int): Int {
  */
 fun fibSequenceDigit(n: Int): Int {
     var fCurrent = 1
-    var fPrev = 1
+    var fPrev: Int
     var sum = 2
-    var lis: List<Int> = mutableListOf(1, 1, 2)
-    var lis2: List<String> = mutableListOf()
+    val lis: MutableList<Int> = mutableListOf(1, 1, 2)
+    val lis2: MutableList<String> = mutableListOf()
     for (i in 4..n) {
         fPrev = fCurrent
         fCurrent = sum
@@ -334,7 +334,7 @@ fun fibSequenceDigit(n: Int): Int {
     }
     for (i in lis) {
         for (j in i.toString()) {
-            lis2 += j.toString()
+            lis2.add(j.toString())
         }
     }
     return (lis2[n - 1]).toInt()
