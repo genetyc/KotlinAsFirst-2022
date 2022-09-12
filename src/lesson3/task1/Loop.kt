@@ -175,7 +175,7 @@ fun collatzSteps(x: Int): Int {
 fun lcm(m: Int, n: Int): Int {
     val ma = minOf(m, n)
     var nok = n * m + 1
-    for (i in ma..m * n) {
+    for (i in ma..m * n step ma) {
         if (i % m == 0 && i % n == 0) nok = minOf(nok, i) else continue
     }
     return nok
