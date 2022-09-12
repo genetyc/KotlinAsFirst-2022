@@ -113,7 +113,7 @@ fun fib(n: Int): Int {
  */
 fun minDivisor(n: Int): Int {
     var div: Int = n
-    for (i in 2..n / 2 + 1) {
+    for (i in 2..sqrt(n.toDouble()).toInt()) {
         if (n % i == 0) {
             if (i < div) div = i else continue
         }
@@ -153,13 +153,17 @@ fun maxDivisor(n: Int): Int {
 fun collatzSteps(x: Int): Int {
     var count = 0
     var numb = x
-    if (x == 1) return 0 else if (x == 2) return 1 else {
-        while (numb != 1) {
-            if (numb % 2 == 0) numb /= 2 else numb = numb * 3 + 1
-            count++
+    return when {
+        (x == 1) -> 0
+        (x == 2) -> 1
+        else -> {
+            while (numb != 1) {
+                if (numb % 2 == 0) numb /= 2 else numb = numb * 3 + 1
+                count++
+            }
+            return count
         }
     }
-    return count
 }
 
 /**
@@ -200,7 +204,7 @@ fun isCoPrime(m: Int, n: Int): Boolean {
     for (j in l2) {
         se.add(j)
     }
-    return (se.size) == (l1.size + l2.size)
+    return se.size == l1.size + l2.size
 }
 
 /**
@@ -240,7 +244,7 @@ fun isPalindrome(n: Int): Boolean {
     val nasd = mutableListOf<String>()
     val len = n.toString().length
     for (i in 1..len) {
-        nasd.add(((pod % 10)).toString())
+        nasd.add((pod % 10).toString())
         pod /= 10
     }
     for (i in nasd) {

@@ -22,7 +22,7 @@ fun pointInsideCircle(x: Double, y: Double, x0: Double, y0: Double, r: Double) =
  */
 fun isNumberHappy(number: Int): Boolean {
     val numb = number.toString()
-    return numb[0].toInt() + numb[1].toInt() == numb[2].toInt() + numb[3].toInt()
+    return numb[0].code + numb[1].code == numb[2].code + numb[3].code
 }
 
 /**
@@ -35,10 +35,7 @@ fun isNumberHappy(number: Int): Boolean {
 fun queenThreatens(x1: Int, y1: Int, x2: Int, y2: Int): Boolean {
     val diag1 = abs(x1 - x2)
     val diag2 = abs(y1 - y2)
-    return when {
-        diag1 == diag2 || x1 == x2 || y1 == y2 -> true
-        else -> false
-    }
+    return diag1 == diag2 || x1 == x2 || y1 == y2
 }
 
 
@@ -68,9 +65,9 @@ fun circleInside(
     x1: Double, y1: Double, r1: Double,
     x2: Double, y2: Double, r2: Double
 ): Boolean {
-    val hyp = sqrt( sqr(abs(x1-x2)) + sqr(abs(y1-y2)))
+    val hyp = sqrt(sqr(abs(x1 - x2)) + sqr(abs(y1 - y2)))
     return when {
-        maxOf(r1,r2) <= hyp -> false
+        maxOf(r1, r2) <= hyp -> false
         hyp + r1 <= r2 -> true
         else -> false
     }
@@ -94,5 +91,6 @@ fun brickPasses(a: Int, b: Int, c: Int, r: Int, s: Int): Boolean {
     return when {
         sq_b > sq_h -> false
         min_b <= minOf(r, s) && mid_b <= maxOf(r, s) -> true
-        else -> false }
+        else -> false
+    }
 }
