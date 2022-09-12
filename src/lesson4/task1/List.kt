@@ -428,7 +428,7 @@ fun russian(n: Int): String {
     fun tens(n: Int): String {
         return when {
             n == 2 -> "двадцать"
-            n == 3 -> "трицать"
+            n == 3 -> "тридцать"
             n == 4 -> "сорок"
             n == 5 -> "пятьдесят"
             n == 6 -> "шестьдесят"
