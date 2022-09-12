@@ -221,13 +221,19 @@ fun accumulate(list: MutableList<Int>): MutableList<Int> {
 fun factorize(n: Int): List<Int> {
     val lis2: MutableList<Int> = mutableListOf()
     var nn = n
-    for (i in 2..n / 2 + 1) {
-        while (nn % i == 0) {
-            lis2.add(i)
-            nn /= i
+    fun isPrime(n: Int) = n>= 2 && (2..n/2).all {n % it != 0}
+    return when {
+        isPrime(n) -> listOf(n)
+        else -> {
+            for (i in 2..n / 2 + 1) {
+                while (nn % i == 0) {
+                    lis2.add(i)
+                    nn /= i
+                }
+            }
+            lis2
         }
     }
-    return lis2.sorted()
 }
 
 /**
