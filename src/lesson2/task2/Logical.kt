@@ -20,10 +20,7 @@ fun pointInsideCircle(x: Double, y: Double, x0: Double, y0: Double, r: Double) =
  * Четырехзначное число назовем счастливым, если сумма первых двух ее цифр равна сумме двух последних.
  * Определить, счастливое ли заданное число, вернуть true, если это так.
  */
-fun isNumberHappy(number: Int): Boolean {
-    val numb = number.toString()
-    return numb[0].code + numb[1].code == numb[2].code + numb[3].code
-}
+fun isNumberHappy(number: Int): Boolean = number / 100 % 10 + number / 1000 == number / 10 % 10 + number % 10
 
 /**
  * Простая (2 балла)
@@ -45,13 +42,11 @@ fun queenThreatens(x1: Int, y1: Int, x2: Int, y2: Int): Boolean {
  * Дан номер месяца (от 1 до 12 включительно) и год (положительный).
  * Вернуть число дней в этом месяце этого года по григорианскому календарю.
  */
-fun daysInMonth(month: Int, year: Int): Int {
-    return when {
-        month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12 -> 31
-        month == 4 || month == 6 || month == 9 || month == 11 -> 30
-        (month == 2 && year % 4 == 0 && year % 100 != 0) || (month == 2 && year % 4 == 0 && year % 400 == 0) -> 29
-        else -> 28
-    }
+fun daysInMonth(month: Int, year: Int): Int = when {
+    month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12 -> 31
+    month == 4 || month == 6 || month == 9 || month == 11 -> 30
+    month == 2 && year % 4 == 0 && year % 100 != 0 || month == 2 && year % 4 == 0 && year % 400 == 0 -> 29
+    else -> 28
 }
 
 /**
@@ -83,14 +78,14 @@ fun circleInside(
  * Вернуть true, если кирпич пройдёт
  */
 fun brickPasses(a: Int, b: Int, c: Int, r: Int, s: Int): Boolean {
-    val sq_h = r * s
-    val sum_b = a + b + c
-    val min_b = minOf(a, b, c)
-    val mid_b = sum_b - (maxOf(a, b, c) + minOf(a, b, c))
-    val sq_b = min_b * mid_b
+    val sqH = r * s
+    val sumB = a + b + c
+    val minB = minOf(a, b, c)
+    val midB = sumB - (maxOf(a, b, c) + minOf(a, b, c))
+    val sqB = minB * midB
     return when {
-        sq_b > sq_h -> false
-        min_b <= minOf(r, s) && mid_b <= maxOf(r, s) -> true
+        sqB > sqH -> false
+        minB <= minOf(r, s) && midB <= maxOf(r, s) -> true
         else -> false
     }
 }

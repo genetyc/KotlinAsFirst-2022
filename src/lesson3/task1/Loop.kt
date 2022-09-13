@@ -3,6 +3,7 @@
 package lesson3.task1
 
 import kotlin.math.sqrt
+import kotlin.math.abs
 
 // Урок 3: циклы
 // Максимальное количество баллов = 9
@@ -74,13 +75,12 @@ fun digitCountInNumber(n: Int, m: Int): Int =
  */
 fun digitNumber(n: Int): Int {
     var count = 0
-    var numb = kotlin.math.abs(n)
-    if (n == 0) return 1 else {
-        while (numb > 0) {
+    var numb = abs(n)
+    if (n == 0) return 1 else
+        while (numb >= 1) {
             count++
             numb /= 10
         }
-    }
     return count
 }
 
@@ -99,9 +99,9 @@ fun fib(n: Int): Int {
         fCurrent = sum
         sum = fPrev + fCurrent
     }
-    return when {
-        n == 1 -> 1
-        n == 2 -> 1
+    return when (n) {
+        1 -> 1
+        2 -> 1
         else -> sum
     }
 }
@@ -112,13 +112,12 @@ fun fib(n: Int): Int {
  * Для заданного числа n > 1 найти минимальный делитель, превышающий 1
  */
 fun minDivisor(n: Int): Int {
-    var div: Int = n
     for (i in 2..sqrt(n.toDouble()).toInt()) {
         if (n % i == 0) {
-            if (i < div) div = i else continue
+            return i
         }
     }
-    return div
+    return n
 }
 
 /**
@@ -127,11 +126,14 @@ fun minDivisor(n: Int): Int {
  * Для заданного числа n > 1 найти максимальный делитель, меньший n
  */
 fun maxDivisor(n: Int): Int {
-    var divis: Int = -1
-    for (i in 1..(n / 2)) {
-        if (n % i == 0) divis = maxOf(i, divis)
+    val nasd = mutableListOf<Int>()
+    for (i in 1..sqrt(n.toDouble()).toInt()) {
+        if (n % i == 0) nasd.add(i)
     }
-    return divis
+    return when (nasd.size) {
+        1 -> 1
+        else -> n / nasd[1]
+    }
 }
 
 /**
@@ -153,9 +155,8 @@ fun maxDivisor(n: Int): Int {
 fun collatzSteps(x: Int): Int {
     var count = 0
     var numb = x
-    return when {
-        (x == 1) -> 0
-        (x == 2) -> 1
+    return when (x) {
+        1 -> 0
         else -> {
             while (numb != 1) {
                 if (numb % 2 == 0) numb /= 2 else numb = numb * 3 + 1
@@ -173,12 +174,14 @@ fun collatzSteps(x: Int): Int {
  * минимальное число k, которое делится и на m и на n без остатка
  */
 fun lcm(m: Int, n: Int): Int {
-    val ma = minOf(m, n)
-    var nok = n * m + 1
-    for (i in ma..m * n step ma) {
-        if (i % m == 0 && i % n == 0) nok = minOf(nok, i) else continue
-    }
-    return nok
+    fun gcd(a: Int, b: Int): Int =
+        when {
+            a == b || b == 0 -> a
+            a == 0 -> b
+            a > b -> gcd(a % b, b)
+            else -> gcd(a, b % a)
+        }
+    return (m*n)/gcd(m,n)
 }
 
 /**
@@ -188,24 +191,7 @@ fun lcm(m: Int, n: Int): Int {
  * Взаимно простые числа не имеют общих делителей, кроме 1.
  * Например, 25 и 49 взаимно простые, а 6 и 8 -- нет.
  */
-fun isCoPrime(m: Int, n: Int): Boolean {
-    val l1: MutableList<Int> = mutableListOf()
-    val l2: MutableList<Int> = mutableListOf()
-    for (i in 1..n) {
-        if (n % i == 0) l1.add(i) else continue
-    }
-    for (j in 2..m) {
-        if (m % j == 0) l2.add(j) else continue
-    }
-    val se: MutableSet<Int> = mutableSetOf()
-    for (i in l1) {
-        se.add(i)
-    }
-    for (j in l2) {
-        se.add(j)
-    }
-    return se.size == l1.size + l2.size
-}
+fun isCoPrime(m: Int, n: Int): Boolean = lcm(m,n) == m*n
 
 /**
  * Средняя (3 балла)
@@ -215,18 +201,25 @@ fun isCoPrime(m: Int, n: Int): Boolean {
  * Использовать операции со строками в этой задаче запрещается.
  */
 fun revert(n: Int): Int {
+    fun pow(x: Int, n: Int): Int {
+        var xpowd = 1
+        for (i in 1..n) {
+            xpowd *= x
+        }
+        return xpowd
+    }
+
     var pod = n
-    var slovo = ""
-    val nasd: MutableList<Int> = mutableListOf()
-    val len = n.toString().length
-    for (i in 1..len) {
+    val nasd = mutableListOf<Int>()
+    while (pod > 0) {
         nasd.add(pod % 10)
         pod /= 10
     }
-    for (i in nasd) {
-        slovo += i
+    var ans = 0
+    for (i in 0 until nasd.size) {
+        ans += pow(10, i) * nasd.reversed()[i]
     }
-    return slovo.toInt()
+    return ans
 }
 
 /**
@@ -240,17 +233,17 @@ fun revert(n: Int): Int {
  */
 fun isPalindrome(n: Int): Boolean {
     var pod = n
-    var slovo = ""
-    val nasd = mutableListOf<String>()
-    val len = n.toString().length
-    for (i in 1..len) {
-        nasd.add((pod % 10).toString())
+    val nasd = mutableListOf<Int>()
+    while (pod > 0) {
+        nasd.add(pod % 10)
         pod /= 10
     }
-    for (i in nasd) {
-        slovo += i
+    for (i in 0 until nasd.size) {
+        if (nasd[i] != nasd[nasd.size - i - 1]) {
+            return false
+        }
     }
-    return slovo == n.toString()
+    return true
 }
 
 /**
@@ -262,12 +255,17 @@ fun isPalindrome(n: Int): Boolean {
  * Использовать операции со строками в этой задаче запрещается.
  */
 fun hasDifferentDigits(n: Int): Boolean {
-    val numb = n.toString()
-    val fi = numb[0]
-    for (i in numb) {
-        if (i == fi) continue else return true
+    var pod = n
+    val nasd = mutableListOf<Int>()
+    while (pod > 0) {
+        nasd.add(pod % 10)
+        pod /= 10
     }
-    return false
+    val ans = mutableSetOf<Int>()
+    for (i in nasd) {
+        ans.add(i)
+    }
+    return ans.size != 1 && n != 0
 }
 
 /**
@@ -279,7 +277,18 @@ fun hasDifferentDigits(n: Int): Boolean {
  * Подумайте, как добиться более быстрой сходимости ряда при больших значениях x.
  * Использовать kotlin.math.sin и другие стандартные реализации функции синуса в этой задаче запрещается.
  */
-fun sin(x: Double, eps: Double): Double = TODO()
+fun sin(x: Double, eps: Double): Double {
+    var count = 1
+    var sin = x % (2 * Math.PI)
+    val sinc = sin
+    var asd = sin
+    while (abs(asd) >= eps) {
+        asd = -asd * sinc * sinc / ((count * 2 + 1) * (count * 2)).toDouble()
+        count += 1
+        sin += asd
+    }
+    return sin
+}
 
 /**
  * Средняя (4 балла)
@@ -290,7 +299,18 @@ fun sin(x: Double, eps: Double): Double = TODO()
  * Подумайте, как добиться более быстрой сходимости ряда при больших значениях x.
  * Использовать kotlin.math.cos и другие стандартные реализации функции косинуса в этой задаче запрещается.
  */
-fun cos(x: Double, eps: Double): Double = TODO()
+fun cos(x: Double, eps: Double): Double {
+    val constX = x % (2 * Math.PI)
+    var count = 1
+    var cos = 1.0
+    var eq = 1.0
+    while (abs(eq) >= eps) {
+        eq = -eq * constX * constX / ((count * 2 - 1) * (count * 2)).toDouble()
+        count += 1
+        cos += eq
+    }
+    return cos
+}
 
 /**
  * Сложная (4 балла)
