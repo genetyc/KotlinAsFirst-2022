@@ -112,17 +112,20 @@ fun whichRookThreatens(
     kingX: Int, kingY: Int,
     rookX1: Int, rookY1: Int,
     rookX2: Int, rookY2: Int
-): Int {
-    return if (kingX == rookX1 && kingX != rookX2 && kingY != rookY2 ||
-        kingY == rookY1 && kingY != rookY2 && kingX != rookX2
-    ) 1
-    else if (kingX == rookX2 && kingX != rookX1 && kingY != rookY1 ||
-        kingY == rookY2 && kingY != rookY1 && kingX != rookX1
-    ) 2
-    else if (kingX == rookX1 && kingX == rookX2 || kingX == rookX1 ||
-        kingX == rookX2 || kingY == rookY2
-    ) 3
-    else 0
+): Int = when {
+    (kingX == rookX1 && kingX != rookX2 && kingY != rookY2 ||
+            kingY == rookY1 && kingY != rookY2 && kingX != rookX2
+            ) -> 1
+
+    (kingX == rookX2 && kingX != rookX1 && kingY != rookY1 ||
+            kingY == rookY2 && kingY != rookY1 && kingX != rookX1
+            ) -> 2
+
+    (kingX == rookX1 && kingX == rookX2 || kingX == rookX1 ||
+            kingX == rookX2 || kingY == rookY2
+            ) -> 3
+
+    else -> 0
 }
 
 /**
@@ -143,9 +146,9 @@ fun rookOrBishopThreatens(
     val diagX = abs(kingX - bishopX)
     val diagY = abs(kingY - bishopY)
     return when {
-        (rookX == kingX || rookY == kingY) && diagX != diagY -> 1
-        rookX != kingX && rookY != kingY && diagX == diagY -> 2
-        rookX == kingX || rookY == kingY -> 3
+        rookX == kingX || rookY == kingY && diagX != diagY -> 1
+        rookY != kingY && diagX == diagY -> 2
+        rookY == kingY -> 3
         else -> 0
     }
 }
@@ -161,15 +164,21 @@ fun rookOrBishopThreatens(
 fun triangleKind(a: Double, b: Double, c: Double): Int {
     var hyp: Double = maxOf(a, b, c)
     val sum: Double
-    if (hyp == a) {
-        hyp = a * a
-        sum = b * b + c * c
-    } else if (hyp == b) {
-        hyp = b * b
-        sum = a * a + c * c
-    } else {
-        hyp = c * c
-        sum = a * a + b * b
+    when (hyp) {
+        a -> {
+            hyp = a * a
+            sum = b * b + c * c
+        }
+
+        b -> {
+            hyp = b * b
+            sum = a * a + c * c
+        }
+
+        else -> {
+            hyp = c * c
+            sum = a * a + b * b
+        }
     }
     return when {
         a > b + c || b > a + c || c > a + b -> -1
