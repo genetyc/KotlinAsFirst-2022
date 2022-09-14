@@ -128,9 +128,9 @@ fun abs(v: List<Double>): Double = sqrt(v.fold(0.0) { sum, element -> sum + elem
  * Рассчитать среднее арифметическое элементов списка list. Вернуть 0.0, если список пуст
  */
 fun mean(list: List<Double>): Double {
-    return when {
-        (list.isEmpty()) -> 0.0
-        else -> (list.fold(0.0) { sum, element -> sum + element }) / list.size.toDouble()
+    return when (list.isEmpty()) {
+        true -> 0.0
+        false -> (list.fold(0.0) { sum, element -> sum + element }) / list.size.toDouble()
     }
 }
 
@@ -159,7 +159,7 @@ fun center(list: MutableList<Double>): MutableList<Double> {
  */
 fun times(a: List<Int>, b: List<Int>): Int {
     var su = 0
-    for (i in 0 until a.size) {
+    for (i in a.indices) {
         su += a[i] * b[i]
     }
     return su
@@ -173,15 +173,16 @@ fun times(a: List<Int>, b: List<Int>): Int {
  * Коэффициенты многочлена заданы списком p: (p0, p1, p2, p3, ..., pN).
  * Значение пустого многочлена равно 0 при любом x.
  */
+fun pow(x: Int, n: Int): Int {
+    var xpowd = 1
+    for (i in 1..n) {
+        xpowd *= x
+    }
+    return xpowd
+}
+
 fun polynom(p: List<Int>, x: Int): Int {
     var su = 0
-    fun pow(x: Int, n: Int): Int {
-        var xpowd = 1
-        for (i in 1..n) {
-            xpowd *= x
-        }
-        return xpowd
-    }
     return when {
         p.isEmpty() -> 0
         (p.size == 1) -> p[0]
@@ -218,10 +219,10 @@ fun accumulate(list: MutableList<Int>): MutableList<Int> {
  * Результат разложения вернуть в виде списка множителей, например 75 -> (3, 5, 5).
  * Множители в списке должны располагаться по возрастанию.
  */
+fun isPrime(n: Int) = n >= 2 && (2..n / 2).all { n % it != 0 }
 fun factorize(n: Int): List<Int> {
     val lis2: MutableList<Int> = mutableListOf()
     var nn = n
-    fun isPrime(n: Int) = n>= 2 && (2..n/2).all {n % it != 0}
     return when {
         isPrime(n) -> listOf(n)
         else -> {
@@ -246,7 +247,6 @@ fun factorize(n: Int): List<Int> {
 fun factorizeToString(n: Int): String {
     val lis2: MutableList<Int> = mutableListOf()
     var nn = n
-    fun isPrime(n: Int) = n >= 2 && (2..n / 2).all { n % it != 0 }
     return if (isPrime(n)) n.toString() else {
         for (i in 2..n / 2 + 1) {
             while (nn % i == 0) {
@@ -301,7 +301,7 @@ fun convertToString(n: Int, base: Int): String {
     list.add(last)
     list = list.reversed() as MutableList<Int>
     val lis: MutableList<Any> = mutableListOf()
-    for (i in 0 until list.size) {
+    for (i in list.indices) {
         if (list[i] < 10) lis.add(list[i]) else lis.add((list[i] + 87.hashCode()).toChar())
     }
     return lis.joinToString(separator = "")
@@ -325,7 +325,7 @@ fun decimal(digits: List<Int>, base: Int): Int {
 
     val list2 = digits.reversed()
     var ss = 0
-    for (i in 0 until list2.size) {
+    for (i in list2.indices) {
         ss += (list2[i] * pow(base, i))
     }
     return ss
@@ -347,18 +347,13 @@ fun decimal(digits: List<Int>, base: Int): Int {
 fun decimalFromString(str: String, base: Int): Int {
     var ss = 0
     var list2: MutableList<Int> = mutableListOf()
-    fun pow(x: Int, n: Int): Int {
-        var xpowd = 1
-        for (i in 1..n) {
-            xpowd *= x
-        }
-        return xpowd
-    }
-    for (i in 0 until str.toList().size) {
-        if ((str.toList()[i].hashCode() - 87) < 0) list2.add(str.toList()[i].hashCode() - 48) else list2.add(str.toList()[i].hashCode() - 87)
+    val strList = str.toList()
+    for (i in strList.indices) {
+        if ((strList[i].hashCode() - 87) < 0) list2.add(strList[i].hashCode() - 48) else
+            list2.add(strList[i].hashCode() - 87)
     }
     list2 = list2.reversed() as MutableList<Int>
-    for (i in 0 until list2.size) {
+    for (i in list2.indices) {
         ss += list2[i] * pow(base, i)
     }
     return ss
@@ -372,7 +367,18 @@ fun decimalFromString(str: String, base: Int): Int {
  * 90 = XC, 100 = C, 400 = CD, 500 = D, 900 = CM, 1000 = M.
  * Например: 23 = XXIII, 44 = XLIV, 100 = C
  */
-fun roman(n: Int): String = TODO()
+fun roman(n: Int): String {
+    val ones = listOf("", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX")
+    val tens = listOf("", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC")
+    val hund = listOf("", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM")
+    val ks = listOf("", "M", "MM", "MMM")
+    val lis = mutableListOf<String>()
+    lis.add(ks[n / 1000])
+    lis.add(hund[n / 100 % 10])
+    lis.add(tens[n / 10 % 10])
+    lis.add(ones[n % 10])
+    return lis.joinToString(separator = "")
+}
 
 /**
  * Очень сложная (7 баллов)
@@ -387,92 +393,92 @@ fun russian(n: Int): String {
         lis.add((i.toString()).toInt())
     }
     fun ones(n: Int): String {
-        return when {
-            n == 1 -> "один"
-            n == 2 -> "два"
-            n == 3 -> "три"
-            n == 4 -> "четыре"
-            n == 5 -> "пять"
-            n == 6 -> "шесть"
-            n == 7 -> "семь"
-            n == 8 -> "восемь"
-            n == 9 -> "девять"
+        return when (n) {
+            1 -> "один"
+            2 -> "два"
+            3 -> "три"
+            4 -> "четыре"
+            5 -> "пять"
+            6 -> "шесть"
+            7 -> "семь"
+            8 -> "восемь"
+            9 -> "девять"
             else -> ""
         }
     }
 
     fun onesTh(n: Int): String {
-        return when {
-            n == 1 -> "одна тысяча"
-            n == 2 -> "две тысячи"
-            n == 3 -> "три тысячи"
-            n == 4 -> "четыре тысячи"
-            n == 5 -> "пять тысяч"
-            n == 6 -> "шесть тысяч"
-            n == 7 -> "семь тысяч"
-            n == 8 -> "восемь тысяч"
-            n == 9 -> "девять тысяч"
+        return when (n) {
+            1 -> "одна тысяча"
+            2 -> "две тысячи"
+            3 -> "три тысячи"
+            4 -> "четыре тысячи"
+            5 -> "пять тысяч"
+            6 -> "шесть тысяч"
+            7 -> "семь тысяч"
+            8 -> "восемь тысяч"
+            9 -> "девять тысяч"
             else -> "тысяч"
         }
     }
 
     fun hund(n: Int): String {
-        return when {
-            n == 1 -> "сто"
-            n == 2 -> "двести"
-            n == 3 -> "триста"
-            n == 4 -> "четыреста"
-            n == 5 -> "пятьсот"
-            n == 6 -> "шестьсот"
-            n == 7 -> "семьсот"
-            n == 8 -> "восемьсот"
-            n == 9 -> "девятьсот"
+        return when (n) {
+            1 -> "сто"
+            2 -> "двести"
+            3 -> "триста"
+            4 -> "четыреста"
+            5 -> "пятьсот"
+            6 -> "шестьсот"
+            7 -> "семьсот"
+            8 -> "восемьсот"
+            9 -> "девятьсот"
             else -> ""
         }
     }
 
     fun tens(n: Int): String {
-        return when {
-            n == 2 -> "двадцать"
-            n == 3 -> "тридцать"
-            n == 4 -> "сорок"
-            n == 5 -> "пятьдесят"
-            n == 6 -> "шестьдесят"
-            n == 7 -> "семьдесят"
-            n == 8 -> "восемьдесят"
-            n == 9 -> "девяносто"
+        return when (n) {
+            2 -> "двадцать"
+            3 -> "тридцать"
+            4 -> "сорок"
+            5 -> "пятьдесят"
+            6 -> "шестьдесят"
+            7 -> "семьдесят"
+            8 -> "восемьдесят"
+            9 -> "девяносто"
             else -> ""
         }
     }
 
     fun tensOnes(n: Int): String {
-        return when {
-            n == 1 -> "десять"
-            n == 2 -> "одиннадцать"
-            n == 3 -> "двенадцать"
-            n == 4 -> "тринадцать"
-            n == 5 -> "четырнадцать"
-            n == 6 -> "пятнадцать"
-            n == 7 -> "шестнадцать"
-            n == 8 -> "семнадцать"
-            n == 9 -> "восемнадцать"
-            n == 10 -> "девятнадцать"
+        return when (n) {
+            1 -> "десять"
+            2 -> "одиннадцать"
+            3 -> "двенадцать"
+            4 -> "тринадцать"
+            5 -> "четырнадцать"
+            6 -> "пятнадцать"
+            7 -> "шестнадцать"
+            8 -> "семнадцать"
+            9 -> "восемнадцать"
+            10 -> "девятнадцать"
             else -> "Error"
         }
     }
 
     fun tensOnesHunds(n: Int): String {
-        return when {
-            n == 1 -> "десять тысяч"
-            n == 2 -> "одиннадцать тысяч"
-            n == 3 -> "двенадцать тысяч"
-            n == 4 -> "тринадцать тысяч"
-            n == 5 -> "четырнадцать тысяч"
-            n == 6 -> "пятнадцать тысяч"
-            n == 7 -> "шестнадцать тысяч"
-            n == 8 -> "семнадцать тысяч"
-            n == 9 -> "восемнадцать тысяч"
-            n == 10 -> "девятнадцать тысяч"
+        return when (n) {
+            1 -> "десять тысяч"
+            2 -> "одиннадцать тысяч"
+            3 -> "двенадцать тысяч"
+            4 -> "тринадцать тысяч"
+            5 -> "четырнадцать тысяч"
+            6 -> "пятнадцать тысяч"
+            7 -> "шестнадцать тысяч"
+            8 -> "семнадцать тысяч"
+            9 -> "восемнадцать тысяч"
+            10 -> "девятнадцать тысяч"
             else -> "Error"
         }
     }
