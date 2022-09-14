@@ -322,17 +322,20 @@ fun cos(x: Double, eps: Double): Double {
  * Использовать операции со строками в этой задаче запрещается.
  */
 fun squareSequenceDigit(n: Int): Int {
-    val lis1 = mutableListOf<String>()
+    var lis1 = mutableListOf<Int>()
+    val lis2 = lis1
     for (i in 1..n) {
-        lis1.add("${i*i}")
-    }
-    val lis2 = mutableListOf<Char>()
-    for (i in 0 until lis1.size) {
-        for (j in lis1[i]) {
-            lis2.add(j)
+        var ii = i * i
+        for (j in 1..digitNumber(ii)) {
+            lis1.add(ii % 10)
+            ii /= 10
         }
+        for (k in lis1.reversed()) {
+            lis2.add(k)
+        }
+        lis1 = mutableListOf()
     }
-    return lis2[n-1].digitToInt()
+    return lis2[n]
 }
 
 /**
@@ -348,18 +351,21 @@ fun fibSequenceDigit(n: Int): Int {
     var fCurrent = 1
     var fPrev: Int
     var sum = 2
-    val lis = mutableListOf("1", "1", "2")
-    val lis2 = mutableListOf<Char>()
+    var lis = mutableListOf<Int>()
+    val lis2 = mutableListOf(1, 1, 2)
     for (i in 4..n) {
         fPrev = fCurrent
         fCurrent = sum
         sum = fPrev + fCurrent
-        lis += "$sum"
-    }
-    for (i in lis) {
-        for (j in i) {
-            lis2.add(j)
+        var ssum = sum
+        for (j in 1..digitNumber(ssum)) {
+            lis.add(ssum % 10)
+            ssum /= 10
         }
+        for (k in lis.reversed()) {
+            lis2.add(k)
+        }
+        lis = mutableListOf()
     }
-    return (lis2[n - 1]).digitToInt()
+    return lis2[n - 1]
 }
