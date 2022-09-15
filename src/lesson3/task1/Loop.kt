@@ -4,6 +4,7 @@ package lesson3.task1
 
 import kotlin.math.sqrt
 import kotlin.math.abs
+import kotlin.math.min
 
 // Урок 3: циклы
 // Максимальное количество баллов = 9
@@ -125,16 +126,7 @@ fun minDivisor(n: Int): Int {
  *
  * Для заданного числа n > 1 найти максимальный делитель, меньший n
  */
-fun maxDivisor(n: Int): Int {
-    val nasd = mutableListOf<Int>()
-    for (i in 1..sqrt(n.toDouble()).toInt()) {
-        if (n % i == 0) nasd.add(i)
-    }
-    return when (nasd.size) {
-        1 -> 1
-        else -> n / nasd[1]
-    }
-}
+fun maxDivisor(n: Int): Int = n / minDivisor(n)
 
 /**
  * Простая (2 балла)
@@ -155,16 +147,11 @@ fun maxDivisor(n: Int): Int {
 fun collatzSteps(x: Int): Int {
     var count = 0
     var numb = x
-    return when (x) {
-        1 -> 0
-        else -> {
-            while (numb != 1) {
-                if (numb % 2 == 0) numb /= 2 else numb = numb * 3 + 1
-                count++
-            }
-            return count
-        }
+    while (numb > 1) {
+        if (numb % 2 == 0) numb /= 2 else numb = numb * 3 + 1
+        count++
     }
+    return count
 }
 
 /**
@@ -173,16 +160,15 @@ fun collatzSteps(x: Int): Int {
  * Для заданных чисел m и n найти наименьшее общее кратное, то есть,
  * минимальное число k, которое делится и на m и на n без остатка
  */
-fun lcm(m: Int, n: Int): Int {
-    fun gcd(a: Int, b: Int): Int =
-        when {
-            a == b || b == 0 -> a
-            a == 0 -> b
-            a > b -> gcd(a % b, b)
-            else -> gcd(a, b % a)
-        }
-    return (m * n) / gcd(m, n)
-}
+fun gcd(a: Int, b: Int): Int =
+    when {
+        a == b || b == 0 -> a
+        a == 0 -> b
+        a > b -> gcd(a % b, b)
+        else -> gcd(a, b % a)
+    }
+
+fun lcm(m: Int, n: Int): Int = (m * n) / gcd(m, n)
 
 /**
  * Средняя (3 балла)
@@ -200,24 +186,30 @@ fun isCoPrime(m: Int, n: Int): Boolean = lcm(m, n) == m * n
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun revert(n: Int): Int {
-    fun pow(x: Int, n: Int): Int {
-        var xpowd = 1
-        for (i in 1..n) {
-            xpowd *= x
-        }
-        return xpowd
+fun pow(x: Int, n: Int): Int {
+    var xpowd = 1
+    for (i in 1..n) {
+        xpowd *= x
     }
+    return xpowd
+}
 
-    var pod = n
-    val nasd = mutableListOf<Int>()
-    while (pod > 0) {
-        nasd.add(pod % 10)
-        pod /= 10
+fun splittin(n: Int): MutableList<Int> {
+    var varN = n
+    val splittedN = mutableListOf<Int>()
+    while (varN > 0) {
+        splittedN.add(varN % 10)
+        varN /= 10
     }
+    return splittedN
+}
+
+fun revert(n: Int): Int {
+    val nasd = splittin(n)
     var ans = 0
+    nasd.reverse()
     for (i in 0 until nasd.size) {
-        ans += pow(10, i) * nasd.reversed()[i]
+        ans += pow(10, i) * nasd[i]
     }
     return ans
 }
@@ -231,20 +223,7 @@ fun revert(n: Int): Int {
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun isPalindrome(n: Int): Boolean {
-    var pod = n
-    val nasd = mutableListOf<Int>()
-    while (pod > 0) {
-        nasd.add(pod % 10)
-        pod /= 10
-    }
-    for (i in 0 until nasd.size) {
-        if (nasd[i] != nasd[nasd.size - i - 1]) {
-            return false
-        }
-    }
-    return true
-}
+fun isPalindrome(n: Int): Boolean = n == revert(n)
 
 /**
  * Средняя (3 балла)
@@ -255,17 +234,8 @@ fun isPalindrome(n: Int): Boolean {
  * Использовать операции со строками в этой задаче запрещается.
  */
 fun hasDifferentDigits(n: Int): Boolean {
-    var pod = n
-    val nasd = mutableListOf<Int>()
-    while (pod > 0) {
-        nasd.add(pod % 10)
-        pod /= 10
-    }
-    val ans = mutableSetOf<Int>()
-    for (i in nasd) {
-        ans.add(i)
-    }
-    return ans.size != 1 && n != 0
+    val ans = splittin(n).toSet()
+    return ans.size > 1
 }
 
 /**
@@ -322,20 +292,17 @@ fun cos(x: Double, eps: Double): Double {
  * Использовать операции со строками в этой задаче запрещается.
  */
 fun squareSequenceDigit(n: Int): Int {
-    var lis1 = mutableListOf<Int>()
-    val lis2 = lis1
+    val lis = mutableListOf<Int>()
     for (i in 1..n) {
         var ii = i * i
-        for (j in 1..digitNumber(ii)) {
-            lis1.add(ii % 10)
+        val lis2 = mutableListOf<Int>()
+        while (ii > 0) {
+            lis2.add(ii % 10)
             ii /= 10
         }
-        for (k in lis1.reversed()) {
-            lis2.add(k)
-        }
-        lis1 = mutableListOf()
+        lis += lis2.reversed()
     }
-    return lis2[n]
+    return lis[n - 1]
 }
 
 /**

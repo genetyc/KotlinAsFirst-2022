@@ -113,18 +113,12 @@ fun whichRookThreatens(
     rookX1: Int, rookY1: Int,
     rookX2: Int, rookY2: Int
 ): Int = when {
-    (kingX == rookX1 && kingX != rookX2 && kingY != rookY2 ||
-            kingY == rookY1 && kingY != rookY2 && kingX != rookX2
-            ) -> 1
+    kingX == rookX1 || kingY == rookY1 -> when {
+        kingX != rookX2 && kingY != rookY2 -> 1
+        else -> 3
+    }
 
-    (kingX == rookX2 && kingX != rookX1 && kingY != rookY1 ||
-            kingY == rookY2 && kingY != rookY1 && kingX != rookX1
-            ) -> 2
-
-    (kingX == rookX1 && kingX == rookX2 || kingX == rookX1 ||
-            kingX == rookX2 || kingY == rookY2
-            ) -> 3
-
+    kingX == rookX2 || kingY == rookY2 -> 2
     else -> 0
 }
 
@@ -146,9 +140,12 @@ fun rookOrBishopThreatens(
     val diagX = abs(kingX - bishopX)
     val diagY = abs(kingY - bishopY)
     return when {
-        rookX == kingX || rookY == kingY && diagX != diagY -> 1
-        rookY != kingY && diagX == diagY -> 2
-        rookY == kingY -> 3
+        kingX == rookX || kingY == rookY -> when (diagY) {
+            diagX -> 3
+            else -> 1
+        }
+
+        diagY == diagX -> 2
         else -> 0
     }
 }
@@ -162,7 +159,7 @@ fun rookOrBishopThreatens(
  * Если такой треугольник не существует, вернуть -1.
  */
 fun triangleKind(a: Double, b: Double, c: Double): Int {
-    var hyp: Double = maxOf(a, b, c)
+    var hyp = maxOf(a, b, c)
     val sum: Double
     when (hyp) {
         a -> {
