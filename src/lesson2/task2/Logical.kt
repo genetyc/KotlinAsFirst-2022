@@ -20,8 +20,8 @@ fun pointInsideCircle(x: Double, y: Double, x0: Double, y0: Double, r: Double) =
  * Четырехзначное число назовем счастливым, если сумма первых двух ее цифр равна сумме двух последних.
  * Определить, счастливое ли заданное число, вернуть true, если это так.
  */
-fun isNumberHappy(number: Int): Boolean = number / 100 % 10 + number / 1000 ==
-        number / 10 % 10 + number % 10
+fun isNumberHappy(number: Int): Boolean =
+    number / 100 % 10 + number / 1000 == number / 10 % 10 + number % 10
 
 /**
  * Простая (2 балла)
@@ -61,7 +61,7 @@ fun circleInside(
     x1: Double, y1: Double, r1: Double,
     x2: Double, y2: Double, r2: Double
 ): Boolean {
-    val hyp = sqrt(sqr(abs(x1 - x2)) + sqr(abs(y1 - y2)))
+    val hyp = sqrt(sqr(x1 - x2) + sqr(y1 - y2))
     return when {
         maxOf(r1, r2) <= hyp -> false
         hyp + r1 <= r2 -> true

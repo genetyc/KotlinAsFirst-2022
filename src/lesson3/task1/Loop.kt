@@ -194,7 +194,7 @@ fun pow(x: Int, n: Int): Int {
     return xpowd
 }
 
-fun splittin(n: Int): MutableList<Int> {
+fun splittin(n: Int): List<Int> {
     var varN = n
     val splittedN = mutableListOf<Int>()
     while (varN > 0) {
@@ -207,9 +207,8 @@ fun splittin(n: Int): MutableList<Int> {
 fun revert(n: Int): Int {
     val nasd = splittin(n)
     var ans = 0
-    nasd.reverse()
-    for (i in 0 until nasd.size) {
-        ans += pow(10, i) * nasd[i]
+    for (i in nasd.indices) {
+        ans += pow(10, i) * nasd.reversed()[i]
     }
     return ans
 }
@@ -233,10 +232,7 @@ fun isPalindrome(n: Int): Boolean = n == revert(n)
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun hasDifferentDigits(n: Int): Boolean {
-    val ans = splittin(n).toSet()
-    return ans.size > 1
-}
+fun hasDifferentDigits(n: Int): Boolean = splittin(n).toSet().size > 1
 
 /**
  * Средняя (4 балла)
@@ -294,13 +290,8 @@ fun cos(x: Double, eps: Double): Double {
 fun squareSequenceDigit(n: Int): Int {
     val lis = mutableListOf<Int>()
     for (i in 1..n) {
-        var ii = i * i
-        val lis2 = mutableListOf<Int>()
-        while (ii > 0) {
-            lis2.add(ii % 10)
-            ii /= 10
-        }
-        lis += lis2.reversed()
+        val ii = i * i
+        lis += splittin(ii).reversed()
     }
     return lis[n - 1]
 }
@@ -318,21 +309,12 @@ fun fibSequenceDigit(n: Int): Int {
     var fCurrent = 1
     var fPrev: Int
     var sum = 2
-    var lis = mutableListOf<Int>()
     val lis2 = mutableListOf(1, 1, 2)
     for (i in 4..n) {
         fPrev = fCurrent
         fCurrent = sum
         sum = fPrev + fCurrent
-        var ssum = sum
-        for (j in 1..digitNumber(ssum)) {
-            lis.add(ssum % 10)
-            ssum /= 10
-        }
-        for (k in lis.reversed()) {
-            lis2.add(k)
-        }
-        lis = mutableListOf()
+        lis2.addAll(splittin(sum).reversed())
     }
     return lis2[n - 1]
 }
