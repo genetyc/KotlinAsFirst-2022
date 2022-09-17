@@ -4,7 +4,6 @@ package lesson3.task1
 
 import kotlin.math.sqrt
 import kotlin.math.abs
-import kotlin.math.min
 
 // Урок 3: циклы
 // Максимальное количество баллов = 9
