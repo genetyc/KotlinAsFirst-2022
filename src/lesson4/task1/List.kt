@@ -309,15 +309,10 @@ fun decimal(digits: List<Int>, base: Int): Int {
  */
 fun decimalFromString(str: String, base: Int): Int {
     var ss = 0
-    val list2 = mutableListOf<Int>()
-    str.toList()
     for (i in str.indices) {
-        if (str[i].hashCode() - 87 < 0) list2.add(str[i].hashCode() - 48) else
-            list2.add(str[i].hashCode() - 87)
-    }
-    list2.reverse()
-    for (i in list2.indices) {
-        ss += list2[i] * pow(base, i)
+        ss += if (str[i].hashCode() - 87 < 0) ((str[i].hashCode() - 48)
+                * pow(base, str.length - i - 1)) else
+            ((str[i].hashCode() - 87) * pow(base, str.length - i - 1))
     }
     return ss
 }
