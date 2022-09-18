@@ -5,6 +5,7 @@ package lesson4.task1
 import lesson1.task1.discriminant
 import kotlin.math.sqrt
 import lesson3.task1.pow
+import lesson3.task1.splittin
 
 // Урок 4: списки
 // Максимальное количество баллов = 12
@@ -346,10 +347,7 @@ fun roman(n: Int): String {
  * 23964 = "двадцать три тысячи девятьсот шестьдесят четыре"
  */
 fun russian(n: Int): String {
-    val lis = mutableListOf<Int>()
-    for (i in n.toString()) {
-        lis.add((i.toString()).toInt())
-    }
+    val lis = splittin(n).reversed()
     fun ones(n: Int): String {
         return when (n) {
             1 -> "один"
@@ -420,8 +418,7 @@ fun russian(n: Int): String {
             7 -> "шестнадцать"
             8 -> "семнадцать"
             9 -> "восемнадцать"
-            10 -> "девятнадцать"
-            else -> "Error"
+            else -> "девятнадцать"
         }
     }
 
@@ -436,8 +433,7 @@ fun russian(n: Int): String {
             7 -> "шестнадцать тысяч"
             8 -> "семнадцать тысяч"
             9 -> "восемнадцать тысяч"
-            10 -> "девятнадцать тысяч"
-            else -> "Error"
+            else -> "девятнадцать тысяч"
         }
     }
 
