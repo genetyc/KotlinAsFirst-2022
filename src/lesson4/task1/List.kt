@@ -4,6 +4,7 @@ package lesson4.task1
 
 import lesson1.task1.discriminant
 import kotlin.math.sqrt
+import lesson3.task1.pow
 
 // Урок 4: списки
 // Максимальное количество баллов = 12
@@ -173,24 +174,15 @@ fun times(a: List<Int>, b: List<Int>): Int {
  * Коэффициенты многочлена заданы списком p: (p0, p1, p2, p3, ..., pN).
  * Значение пустого многочлена равно 0 при любом x.
  */
-fun pow(x: Int, n: Int): Int {
-    var xpowd = 1
-    for (i in 1..n) {
-        xpowd *= x
-    }
-    return xpowd
-}
-
 fun polynom(p: List<Int>, x: Int): Int {
     var su = 0
     return when {
         p.isEmpty() -> 0
-        (p.size == 1) -> p[0]
         else -> {
-            for (i in 1..p.size) {
-                su += p[i - 1] * pow(x, i - 1)
+            for (i in p.indices) {
+                su += p[i] * pow(x, i)
             }
-            return su
+            su
         }
     }
 }
@@ -221,18 +213,18 @@ fun accumulate(list: MutableList<Int>): MutableList<Int> {
  */
 fun isPrime(n: Int) = n >= 2 && (2..n / 2).all { n % it != 0 }
 fun factorize(n: Int): List<Int> {
-    val lis2: MutableList<Int> = mutableListOf()
+    val lis2 = mutableListOf<Int>()
     var nn = n
-    return when {
-        isPrime(n) -> listOf(n)
+    return when (isPrime(n)) {
+        true -> listOf(n)
         else -> {
-            for (i in 2..n / 2 + 1) {
+            for (i in 2..n / 2) {
                 while (nn % i == 0) {
                     lis2.add(i)
                     nn /= i
                 }
             }
-            lis2
+            lis2.toList()
         }
     }
 }
@@ -244,19 +236,7 @@ fun factorize(n: Int): List<Int> {
  * Результат разложения вернуть в виде строки, например 75 -> 3*5*5
  * Множители в результирующей строке должны располагаться по возрастанию.
  */
-fun factorizeToString(n: Int): String {
-    val lis2: MutableList<Int> = mutableListOf()
-    var nn = n
-    return if (isPrime(n)) n.toString() else {
-        for (i in 2..n / 2 + 1) {
-            while (nn % i == 0) {
-                lis2.add(i)
-                nn /= i
-            }
-        }
-        lis2.sorted().joinToString(separator = "*")
-    }
-}
+fun factorizeToString(n: Int): String = factorize(n).sorted().joinToString(separator = "*")
 
 /**
  * Средняя (3 балла)
@@ -266,9 +246,9 @@ fun factorizeToString(n: Int): String {
  * например: n = 100, base = 4 -> (1, 2, 1, 0) или n = 250, base = 14 -> (1, 3, 12)
  */
 fun convert(n: Int, base: Int): List<Int> {
-    val list: MutableList<Int> = mutableListOf()
+    val list = mutableListOf<Int>()
     var xx = n
-    var last: Int = if (n < base) n else -1
+    var last = if (n < base) n else -1
     while (xx >= base) {
         if (xx / base < base) last = xx / base
         list.add(xx % base)
@@ -290,21 +270,12 @@ fun convert(n: Int, base: Int): List<Int> {
  * (например, n.toString(base) и подобные), запрещается.
  */
 fun convertToString(n: Int, base: Int): String {
-    var list: MutableList<Int> = mutableListOf()
-    var xx = n
-    var last: Int = if (n < base) n else -1
-    while (xx >= base) {
-        if (xx / base < base) last = xx / base
-        list.add(xx % base)
-        xx /= base
+    val liss = convert(n, base).toMutableList<Any>()
+    for (i in liss.indices) {
+        if (liss[i].toString().toInt() < 10) continue else liss[i] =
+            (liss[i].toString().toInt() + 87.hashCode()).toChar()   //87 - отличие между кодом числа 10 и буквы a
     }
-    list.add(last)
-    list = list.reversed() as MutableList<Int>
-    val lis: MutableList<Any> = mutableListOf()
-    for (i in list.indices) {
-        if (list[i] < 10) lis.add(list[i]) else lis.add((list[i] + 87.hashCode()).toChar())
-    }
-    return lis.joinToString(separator = "")
+    return liss.joinToString(separator = "")
 }
 
 /**
@@ -315,14 +286,6 @@ fun convertToString(n: Int, base: Int): String {
  * Например: digits = (1, 3, 12), base = 14 -> 250
  */
 fun decimal(digits: List<Int>, base: Int): Int {
-    fun pow(x: Int, n: Int): Int {
-        var xpowd = 1
-        for (i in 1..n) {
-            xpowd *= x
-        }
-        return xpowd
-    }
-
     val list2 = digits.reversed()
     var ss = 0
     for (i in list2.indices) {
@@ -346,13 +309,13 @@ fun decimal(digits: List<Int>, base: Int): Int {
  */
 fun decimalFromString(str: String, base: Int): Int {
     var ss = 0
-    var list2: MutableList<Int> = mutableListOf()
-    val strList = str.toList()
-    for (i in strList.indices) {
-        if ((strList[i].hashCode() - 87) < 0) list2.add(strList[i].hashCode() - 48) else
-            list2.add(strList[i].hashCode() - 87)
+    val list2 = mutableListOf<Int>()
+    str.toList()
+    for (i in str.indices) {
+        if (str[i].hashCode() - 87 < 0) list2.add(str[i].hashCode() - 48) else
+            list2.add(str[i].hashCode() - 87)
     }
-    list2 = list2.reversed() as MutableList<Int>
+    list2.reverse()
     for (i in list2.indices) {
         ss += list2[i] * pow(base, i)
     }
@@ -372,12 +335,12 @@ fun roman(n: Int): String {
     val tens = listOf("", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC")
     val hund = listOf("", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM")
     val ks = listOf("", "M", "MM", "MMM")
-    val lis = mutableListOf<String>()
-    lis.add(ks[n / 1000])
-    lis.add(hund[n / 100 % 10])
-    lis.add(tens[n / 10 % 10])
-    lis.add(ones[n % 10])
-    return lis.joinToString(separator = "")
+    var lis = ""
+    lis += (ks[n / 1000])
+    lis += (hund[n / 100 % 10])
+    lis += (tens[n / 10 % 10])
+    lis += (ones[n % 10])
+    return lis
 }
 
 /**
@@ -388,7 +351,7 @@ fun roman(n: Int): String {
  * 23964 = "двадцать три тысячи девятьсот шестьдесят четыре"
  */
 fun russian(n: Int): String {
-    val lis: MutableList<Int> = mutableListOf()
+    val lis = mutableListOf<Int>()
     for (i in n.toString()) {
         lis.add((i.toString()).toInt())
     }
@@ -482,72 +445,69 @@ fun russian(n: Int): String {
             else -> "Error"
         }
     }
+
+    fun repl(n: String): String = n.trim().replace("   ", " ").replace("  ", " ")
     return when {
         (lis.size == 1) -> ones(lis[0])
-        (lis.size == 2 && lis[0] == 1) -> tensOnes(lis[0] + lis[1]).trim().replace("   ", " ").replace("  ", " ")
-        (lis.size == 2 && lis[0] != 1) -> "${tens(lis[0])} ${ones(lis[1])}".trim().replace("   ", " ")
+        (lis.size == 2 && lis[0] == 1) -> tensOnes(lis[0] + lis[1])
+        (lis.size == 2 && lis[0] != 1) -> "${tens(lis[0])} ${ones(lis[1])}"
+
+        (lis.size == 3 && lis[1] == 1) -> "${hund(lis[0])} ${tensOnes(lis[1] + lis[2])}".trim()
             .replace("  ", " ")
 
-        (lis.size == 3 && lis[1] == 1) -> "${hund(lis[0])} ${tensOnes(lis[1] + lis[2])}".trim().replace("   ", " ")
-            .replace("  ", " ")
+        (lis.size == 3 && lis[1] != 1) -> repl(
+            "${hund(lis[0])} ${tens(lis[1])}" +
+                    " ${ones(lis[2])}"
+        )
 
-        (lis.size == 3 && lis[1] != 1) -> "${hund(lis[0])} ${tens(lis[1])} ${ones(lis[2])}".trim().replace("   ", " ")
-            .replace("  ", " ")
+        (lis.size == 4 && lis[2] == 1) -> repl(
+            "${onesTh(lis[0])} ${hund(lis[1])}" +
+                    " ${tensOnes(lis[3] + lis[2])}"
+        )
 
-        (lis.size == 4 && lis[2] == 1) -> "${onesTh(lis[0])} ${hund(lis[1])} ${tensOnes(lis[3] + lis[2])}".trim()
-            .replace("   ", " ").replace("  ", " ")
+        (lis.size == 4 && lis[2] != 1) -> repl(
+            "${onesTh(lis[0])} ${hund(lis[1])} " +
+                    "${tens(lis[2])} ${ones(lis[3])}"
+        )
 
-        (lis.size == 4 && lis[2] != 1) -> "${onesTh(lis[0])} ${hund(lis[1])} ${tens(lis[2])} ${ones(lis[3])}".trim()
-            .replace("   ", " ").replace("  ", " ")
+        (lis.size == 5 && lis[0] == 1 && lis[3] == 1) -> repl(
+            "${tensOnesHunds(lis[0] + lis[1])} " +
+                    "${hund(lis[2])} ${tensOnes(lis[3] + lis[4])}"
+        )
 
-        (lis.size == 5 && lis[0] == 1 && lis[3] == 1) -> "${tensOnesHunds(lis[0] + lis[1])} ${hund(lis[2])} ${
-            tensOnes(
-                lis[3] + lis[4]
-            )
-        }".trim().replace("   ", " ").replace("  ", " ")
+        (lis.size == 5 && lis[0] != 1 && lis[3] == 1) -> repl(
+            "${tens(lis[0])} ${onesTh(lis[1])} " +
+                    "${hund(lis[2])} ${tensOnes(lis[3] + lis[4])}"
+        )
 
-        (lis.size == 5 && lis[0] != 1 && lis[3] == 1) -> "${tens(lis[0])} ${onesTh(lis[1])} ${hund(lis[2])} ${
-            tensOnes(
-                lis[3] + lis[4]
-            )
-        }".trim().replace("   ", " ").replace("  ", " ")
+        (lis.size == 5 && lis[0] == 1 && lis[3] != 1) -> repl(
+            "${tensOnesHunds(lis[0] + lis[1])} " +
+                    "${hund(lis[2])} ${tens(lis[3])} ${ones(lis[4])}"
+        )
 
-        (lis.size == 5 && lis[0] == 1 && lis[3] != 1) -> "${tensOnesHunds(lis[0] + lis[1])} ${hund(lis[2])} ${tens(lis[3])} ${
-            ones(
-                lis[4]
-            )
-        }".trim().replace("   ", " ").replace("  ", " ")
+        (lis.size == 5 && lis[0] != 1 && lis[3] != 1) -> repl(
+            "${tens(lis[0])} " +
+                    " ${onesTh(lis[1])} ${hund(lis[2])} ${tens(lis[3])} ${ones(lis[4])}"
+        )
 
-        (lis.size == 5 && lis[0] != 1 && lis[3] != 1) -> "${tens(lis[0])} ${onesTh(lis[1])} ${hund(lis[2])} ${tens(lis[3])} ${
-            ones(
-                lis[4]
-            )
-        }".trim().replace("   ", " ").replace("  ", " ")
+        (lis.size == 6 && lis[1] == 1 && lis[4] == 1) -> repl(
+            "${hund(lis[0])} " +
+                    "${tensOnesHunds(lis[2] + lis[1])} ${hund(lis[3])} ${tensOnes(lis[5] + lis[4])}"
+        )
 
-        (lis.size == 6 && lis[1] == 1 && lis[4] == 1) -> "${hund(lis[0])} ${tensOnesHunds(lis[2] + lis[1])} ${hund(lis[3])} ${
-            tensOnes(
-                lis[5] + lis[4]
-            )
-        }".trim().replace("   ", " ").replace("  ", " ")
+        (lis.size == 6 && lis[1] == 1 && lis[4] != 1) -> repl(
+            "${hund(lis[0])} " +
+                    "${tensOnesHunds(lis[2] + lis[1])} ${hund(lis[3])} ${tens(lis[4])} ${ones(lis[5])}"
+        )
 
-        (lis.size == 6 && lis[1] == 1 && lis[4] != 1) -> "${hund(lis[0])} ${tensOnesHunds(lis[2] + lis[1])} ${hund(lis[3])} ${
-            tens(
-                lis[4]
-            )
-        } ${ones(lis[5])}".trim().replace("   ", " ").replace("  ", " ")
+        (lis.size == 6 && lis[1] != 1 && lis[4] == 1) -> repl(
+            "${hund(lis[0])} ${tens(lis[1])}" +
+                    " ${onesTh(lis[2])} ${hund(lis[3])} ${tensOnes(lis[4] + lis[5])}"
+        )
 
-        (lis.size == 6 && lis[1] != 1 && lis[4] == 1) -> "${hund(lis[0])} ${tens(lis[1])} ${onesTh(lis[2])} ${hund(lis[3])} ${
-            tensOnes(
-                lis[4] + lis[5]
-            )
-        }".trim().replace("   ", " ").replace("  ", " ")
-
-        (lis.size == 6 && lis[1] != 1 && lis[4] != 1) -> "${hund(lis[0])} ${tens(lis[1])} ${onesTh(lis[2])} ${hund(lis[3])} ${
-            tens(
-                lis[4]
-            )
-        } ${ones(lis[5])}".trim().replace("   ", " ").replace("  ", " ")
-
-        else -> "Error"
+        else -> repl(
+            "${hund(lis[0])} ${tens(lis[1])}" +
+                    " ${onesTh(lis[2])} ${hund(lis[3])} ${tens(lis[4])} ${ones(lis[5])}"
+        )
     }
 }
