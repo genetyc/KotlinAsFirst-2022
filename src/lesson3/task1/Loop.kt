@@ -204,10 +204,10 @@ fun splittin(n: Int): List<Int> {
 }
 
 fun revert(n: Int): Int {
-    val nasd = splittin(n)
+    val nasd = splittin(n).reversed()
     var ans = 0
     for (i in nasd.indices) {
-        ans += pow(10, i) * nasd.reversed()[i]
+        ans += pow(10, i) * nasd[i]
     }
     return ans
 }
@@ -287,12 +287,19 @@ fun cos(x: Double, eps: Double): Double {
  * Использовать операции со строками в этой задаче запрещается.
  */
 fun squareSequenceDigit(n: Int): Int {
-    val lis = mutableListOf<Int>()
-    for (i in 1..n) {
-        val ii = i * i
-        lis += splittin(ii).reversed()
-    }
-    return lis[n - 1]
+    var count = 1
+    var sq = 1
+    var ans = 0
+    do {
+        val ii = sq * sq
+        for (i in splittin(ii).reversed()) {
+            ans = i
+            count++
+            if (count > n) break
+        }
+        sq++
+    } while (count <= n)
+    return ans
 }
 
 /**
@@ -308,12 +315,22 @@ fun fibSequenceDigit(n: Int): Int {
     var fCurrent = 1
     var fPrev: Int
     var sum = 2
-    val lis2 = mutableListOf(1, 1, 2)
-    for (i in 4..n) {
+    var count = 4
+    var ans = 0
+    do {
         fPrev = fCurrent
         fCurrent = sum
         sum = fPrev + fCurrent
-        lis2.addAll(splittin(sum).reversed())
+        for (i in splittin(sum).reversed()) {
+            ans = i
+            count++
+            if (count > n) break
+        }
+    } while (count <= n)
+    return when (n) {
+        1 -> 1
+        2 -> 1
+        3 -> 2
+        else -> ans
     }
-    return lis2[n - 1]
 }

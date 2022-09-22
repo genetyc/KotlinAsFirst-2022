@@ -152,7 +152,7 @@ fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>): MutableMa
  * В выходном списке не должно быть повторяющихся элементов,
  * т. е. whoAreInBoth(listOf("Марат", "Семён, "Марат"), listOf("Марат", "Марат")) == listOf("Марат")
  */
-fun whoAreInBoth(a: List<String>, b: List<String>): List<String> = a.filter { it in b }
+fun whoAreInBoth(a: List<String>, b: List<String>): List<String> = a.filter { it in b }.toSet().toList()
 
 /**
  * Средняя (3 балла)
@@ -349,7 +349,29 @@ fun hasAnagrams(words: List<String>): Boolean {
  *          "GoodGnome" to setOf()
  *        )
  */
-fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<String>> = TODO()
+fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<String>> {
+    val map1 = mutableMapOf<String, MutableSet<String>>()
+    for ((i, j) in friends.entries) {
+        if (j == emptySet<String>()) map1[i] = mutableSetOf()
+        for (k in j) {
+            if (k !in friends.keys) map1[k] = mutableSetOf()
+        }
+        map1[i] = j.toMutableSet()
+    }
+    for ((i, j) in map1.entries) {
+        for (k in j) {
+            if (k != i && j != emptySet<String>()) {
+                map1[k]?.let { map1[i]?.addAll(it) }
+            }
+        }
+    }
+    for ((i, j) in map1.entries) {
+        for (k in j) {
+            if (k == i) map1[i]?.remove(k)
+        }
+    }
+    return map1
+}
 
 /**
  * Сложная (6 баллов)
@@ -400,4 +422,24 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
  *     450
  *   ) -> emptySet()
  */
-fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> = TODO()
+fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> {
+    val tb = Array(treasures.keys.size + 1) { IntArray(capacity + 1) { 0 } }
+    val mass = treasures.values.map { it.first }
+    val price = treasures.values.map { it.second }
+    val items = mutableSetOf<String>()
+    var capVar = capacity
+    for (i in 1..treasures.keys.size) {
+        for (j in 1..capacity) {
+            if (mass[i - 1] > j) tb[i][j] = tb[i - 1][j] else tb[i][j] =
+                maxOf(price[i - 1] + tb[i - 1][j - mass[i - 1]], tb[i - 1][j])
+        }
+    }
+
+    for (i in 1..treasures.keys.size) {
+        if (tb[i - 1][capVar] != tb[i][capVar]) {
+            items.add(treasures.keys.toList()[i - 1])
+            capVar -= mass[i - 1]
+        }
+    }
+    return items.toSet()
+}

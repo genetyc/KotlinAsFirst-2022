@@ -274,7 +274,7 @@ fun convertToString(n: Int, base: Int): String {
     val liss = convert(n, base).toMutableList<Any>()
     for (i in liss.indices) {
         if (liss[i].toString().toInt() < 10) continue else liss[i] =
-            (liss[i].toString().toInt() + 87.hashCode()).toChar()   //87 - отличие между кодом числа 10 и буквы a
+            (liss[i].toString().toInt() + 87.hashCode()).toChar()   //87 - отличие между кодом числа 10 и кодом буквы a
     }
     return liss.joinToString(separator = "")
 }
@@ -311,7 +311,7 @@ fun decimal(digits: List<Int>, base: Int): Int {
 fun decimalFromString(str: String, base: Int): Int {
     var ss = 0
     for (i in str.indices) {
-        ss += if (str[i].hashCode() - 87 < 0) ((str[i].hashCode() - 48)
+        ss += if (str[i].hashCode() - 87 < 0) ((str[i].hashCode() - 48)     //48 - разница между кодом числа 1 и его номиналом
                 * pow(base, str.length - i - 1)) else
             ((str[i].hashCode() - 87) * pow(base, str.length - i - 1))
     }
