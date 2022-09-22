@@ -255,8 +255,9 @@ fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): S
  *   canBuildFrom(listOf('a', 'b', 'o'), "baobab") -> true
  */
 fun canBuildFrom(chars: List<Char>, word: String): Boolean {
-    for (i in word) {
-        if (i !in chars) return false
+    val charsLowered = chars.map { it.lowercase() }
+    for (i in word.lowercase()) {
+        if (i.toString() !in charsLowered) return false
     }
     return true
 }
@@ -307,6 +308,7 @@ fun buildUpAnagram(wo: String, n: String): Boolean {
 }
 
 fun hasAnagrams(words: List<String>): Boolean {
+    if (words.count { it == "" } > 1) return true
     for (i in words) {
         for (j in words) {
             if (buildUpAnagram(i, j)) return true
@@ -394,7 +396,7 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
     if (list.isEmpty() || list.min() > number) return Pair(-1, -1) else {
         for (i in list.size - 1 downTo 0) {
             for (j in list.size - 1 downTo 0) {
-                if (list[i] + list[j] == number && i != j) return Pair(minOf(i, j), maxOf(i, j)); break
+                if (list[i] + list[j] == number && i != j) return Pair(minOf(i, j), maxOf(i, j))
             }
         }
     }
@@ -435,7 +437,7 @@ fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<Strin
         }
     }
 
-    for (i in 1..treasures.keys.size) {
+    for (i in treasures.keys.size downTo 1) {
         if (tb[i - 1][capVar] != tb[i][capVar]) {
             items.add(treasures.keys.toList()[i - 1])
             capVar -= mass[i - 1]
