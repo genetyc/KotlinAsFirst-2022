@@ -3,7 +3,9 @@
 package lesson6.task1
 
 import lesson2.task2.daysInMonth
+import java.lang.IllegalArgumentException
 import java.lang.NumberFormatException
+import java.util.function.DoubleBinaryOperator
 
 // Урок 6: разбор строк, исключения
 // Максимальное количество баллов = 13
@@ -98,7 +100,17 @@ fun convertToWord(str: String): Int {
 fun dateStrToDigit(str: String): String {
     val lis: List<String> = str.split(" ").map { it }
     if (lis.size != 3) return ""
-    val lis2 = mutableListOf("%02d".format(lis[0].toInt()), "%02d".format(convertToWord(lis[1])), lis[2])
+    val lis2 = mutableListOf<String>()
+    try {
+        lis2.addAll(
+            listOf(
+                "%02d".format(lis[0].toInt()),
+                "%02d".format(convertToWord(lis[1])), lis[2]
+            )
+        )
+    } catch (e: NumberFormatException) {
+        return ""
+    }
     return when {
         lis2[0].toInt() > daysInMonth(lis2[1].toInt(), lis[2].toInt()) -> ""
         lis2[1].toInt() == -1 -> ""
@@ -165,11 +177,18 @@ fun dateDigitToStr(digital: String): String {
 fun spl(n: String): String = n.split(" ", "+", "(", ")", "-").joinToString(separator = "")
 
 fun chec(n: String): String {
+    val nn: String
+    try {
+        nn = n.substring(1 until n.length)
+    } catch (e: StringIndexOutOfBoundsException) {
+        return ""
+    }
     return if (n.substring(1 until n.length).contains(Regex("""[^\d-+)(]"""))) "" else n
 }
 
 fun flattenPhoneNumber(phone: String): String {
     var plu = ""
+    if ("()" in phone) return ""
     val subst: String
     if (phone[0].toString() == "+") {
         subst = plu + spl(phone)
@@ -190,7 +209,17 @@ fun flattenPhoneNumber(phone: String): String {
  * Прочитать строку и вернуть максимальное присутствующее в ней число (717 в примере).
  * При нарушении формата входной строки или при отсутствии в ней чисел, вернуть -1.
  */
-fun bestLongJump(jumps: String): Int = TODO()
+fun bestLongJump(jumps: String): Int {
+    return if (jumps.contains(Regex("""[^\d-% ]"""))) -1
+    else {
+        val numbers = mutableListOf(-1)
+        val j = jumps.split(" ", "%", "-")
+        for (i in j) {
+            if (i.toIntOrNull() != null) numbers.add(i.toInt())
+        }
+        return numbers.max()
+    }
+}
 
 /**
  * Сложная (6 баллов)
@@ -203,7 +232,22 @@ fun bestLongJump(jumps: String): Int = TODO()
  * При нарушении формата входной строки, а также в случае отсутствия удачных попыток,
  * вернуть -1.
  */
-fun bestHighJump(jumps: String): Int = TODO()
+fun bestHighJump(jumps: String): Int {
+    if (jumps.contains(Regex("""[^0-9%\-+ ]"""))) return -1
+    val spl = jumps.split("+").map { it.trim() }
+    var max = -1
+    val spl2 = spl.map { it.split(" ") }
+    for (i in 0 until spl2.size - 1) {
+        if (spl2[i].last().contains(Regex("""[0-9]"""))
+            && spl2[i + 1].first().contains(Regex("""[0-9]"""))
+            || spl2[i].last().contains(Regex("""[0-9]"""))
+            && spl2[i + 1].first().contains(Regex(""""""))
+        ) {
+            max = maxOf(spl2[i].last().toInt(), max)
+        }
+    }
+    return max
+}
 
 /**
  * Сложная (6 баллов)
@@ -214,7 +258,33 @@ fun bestHighJump(jumps: String): Int = TODO()
  * Вернуть значение выражения (6 для примера).
  * Про нарушении формата входной строки бросить исключение IllegalArgumentException
  */
-fun plusMinus(expression: String): Int = TODO()
+fun plusMinus(expression: String): Int {
+    val spl = expression.split(" ")
+    if (spl.first().contains(Regex("""[-+]""")) || spl.last()
+            .contains(Regex("""[-+]"""))
+    ) throw IllegalArgumentException()
+    for (i in spl) if (i.contains(Regex("""[0-9]"""))
+        && i.contains(Regex("""[+-]"""))
+    ) throw IllegalArgumentException()
+    for (i in 1 until spl.size) {
+        if (spl[i].contains(Regex("""[+-]""")) && spl[i - 1].contains
+                (Regex("""[+-]""")) || spl[i].contains(Regex("""[0-9]"""))
+            && spl[i - 1].contains(Regex("""[0-9]"""))
+        ) throw IllegalArgumentException()
+    }
+    var count = spl[0].toInt()
+    if (spl.size == 1) return spl[0].toInt() else {
+        for (i in spl.indices) {
+            if (spl[i].contains(Regex("""[0-9]"""))) continue else {
+                when (spl[i]) {
+                    "+" -> count += spl[i + 1].toInt()
+                    else -> count -= spl[i + 1].toInt()
+                }
+            }
+        }
+    }
+    return count
+}
 
 /**
  * Сложная (6 баллов)
@@ -225,7 +295,16 @@ fun plusMinus(expression: String): Int = TODO()
  * Вернуть индекс начала первого повторяющегося слова, или -1, если повторов нет.
  * Пример: "Он пошёл в в школу" => результат 9 (индекс первого 'в')
  */
-fun firstDuplicateIndex(str: String): Int = TODO()
+fun firstDuplicateIndex(str: String): Int {
+    val spl = str.split(" ", ",", ".").map { it.lowercase() }
+    var count = 0
+    if (spl.size == 1) return -1
+    for (i in 0 until spl.size - 1) {
+        if (spl[i] == spl[i + 1]) return count
+        count += spl[i].length + 1
+    }
+    return -1
+}
 
 /**
  * Сложная (6 баллов)
@@ -238,7 +317,21 @@ fun firstDuplicateIndex(str: String): Int = TODO()
  * или пустую строку при нарушении формата строки.
  * Все цены должны быть больше нуля либо равны нулю.
  */
-fun mostExpensive(description: String): String = TODO()
+fun mostExpensive(description: String): String {
+    val spl = description.split(" ", ";").filter { it != "" }
+    val mp = mutableMapOf<String, Double>()
+    for (i in 0 until spl.size - 1 step 2) {
+        mp[spl[i]] = spl[i + 1].toDouble()
+    }
+    var mx = -1.0
+    var ans = ""
+    for ((i, k) in mp.entries) {
+        if (k > mx) {
+            mx = k; ans = i
+        }
+    }
+    return ans
+}
 
 /**
  * Сложная (6 баллов)
@@ -251,7 +344,28 @@ fun mostExpensive(description: String): String = TODO()
  *
  * Вернуть -1, если roman не является корректным римским числом
  */
-fun fromRoman(roman: String): Int = TODO()
+
+fun transform(n: String): Int = when (n) {
+    "I" -> 1
+    "V" -> 5
+    "X" -> 10
+    "L" -> 50
+    "C" -> 100
+    "D" -> 500
+    else -> 1000
+}
+
+fun fromRoman(roman: String): Int {
+    if (roman.contains(Regex("""[^IVXLCDM]"""))) return -1
+    var count = 0
+    val lis: List<Int> = roman.map { transform(it.toString()) }
+    for (i in 0 until lis.size - 1) {
+        if (lis[i] < lis[i + 1]) {
+            count -= lis[i]
+        } else count += lis[i]
+    }
+    return count + lis.last()
+}
 
 /**
  * Очень сложная (7 баллов)

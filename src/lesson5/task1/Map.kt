@@ -308,10 +308,10 @@ fun buildUpAnagram(wo: String, n: String): Boolean {
 }
 
 fun hasAnagrams(words: List<String>): Boolean {
-    if (words.count { it == "" } > 1) return true
     for (i in words) {
         for (j in words) {
-            if (buildUpAnagram(i, j)) return true
+            if (buildUpAnagram(i, j) || words.count { it == i } > 1)
+                return true
         }
     }
     return false
