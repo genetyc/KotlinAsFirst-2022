@@ -188,7 +188,7 @@ fun chec(n: String): String {
 
 fun flattenPhoneNumber(phone: String): String {
     var plu = ""
-    if ("()" in phone) return ""
+    if ("()" in phone || "\n" in phone) return ""
     val subst: String
     if (phone[0].toString() == "+") {
         subst = plu + spl(phone)
@@ -300,7 +300,7 @@ fun firstDuplicateIndex(str: String): Int {
     var count = 0
     if (spl.size == 1) return -1
     for (i in 0 until spl.size - 1) {
-        if (spl[i] == spl[i + 1]) return count
+        if (spl[i] == spl[i + 1] && spl[i] != "") return count
         count += spl[i].length + 1
     }
     return -1
@@ -356,7 +356,7 @@ fun transform(n: String): Int = when (n) {
 }
 
 fun fromRoman(roman: String): Int {
-    if (roman.contains(Regex("""[^IVXLCDM]"""))) return -1
+    if (roman.contains(Regex("""[^IVXLCDM]""")) || roman.isEmpty()) return -1
     var count = 0
     val lis: List<Int> = roman.map { transform(it.toString()) }
     for (i in 0 until lis.size - 1) {
