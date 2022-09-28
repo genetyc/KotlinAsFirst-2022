@@ -2,6 +2,7 @@
 
 package lesson6.task1
 
+import junit.framework.AssertionFailedError
 import lesson2.task2.daysInMonth
 import java.lang.IllegalArgumentException
 import java.lang.NumberFormatException
@@ -188,12 +189,16 @@ fun chec(n: String): String {
 
 fun flattenPhoneNumber(phone: String): String {
     var plu = ""
-    if ("()" in phone || "\n" in phone) return ""
+    if ("()" in phone || phone.contains("\n")) return ""
     val subst: String
-    if (phone[0].toString() == "+") {
-        subst = plu + spl(phone)
-        plu = "+"
-    } else subst = spl(phone)
+    try {
+        if (phone[0].toString() == "+") {
+            subst = plu + spl(phone)
+            plu = "+"
+        } else subst = spl(phone)
+    } catch (e: StringIndexOutOfBoundsException) {
+        return ""
+    }
     return if (plu.isNotBlank()) {
         if (chec(subst) != "") plu + subst else ""
     } else if (chec(subst) != "") subst else ""

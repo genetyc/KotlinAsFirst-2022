@@ -295,7 +295,7 @@ fun squareSequenceDigit(n: Int): Int {
         for (i in splittin(ii).reversed()) {
             ans = i
             count++
-            if (count > n) break
+            if (count > n) return ans
         }
         sq++
     } while (count <= n)
