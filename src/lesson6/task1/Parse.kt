@@ -175,33 +175,27 @@ fun dateDigitToStr(digital: String): String {
  *
  * PS: Дополнительные примеры работы функции можно посмотреть в соответствующих тестах.
  */
-fun spl(n: String): String = n.split(" ", "+", "(", ")", "-").joinToString(separator = "")
+fun spl(n: String): String = n.split(" ", "+", "(", ")", "-")
+    .joinToString(separator = "")
 
-fun chec(n: String): String {
-    val nn: String
-    try {
-        nn = n.substring(1 until n.length)
-    } catch (e: StringIndexOutOfBoundsException) {
-        return ""
-    }
-    return if (n.substring(1 until n.length).contains(Regex("""[^\d-+)(]"""))) "" else n
+fun chec(n: String): Boolean = when {
+    "()" in n -> false
+    n.isEmpty() -> false
+    n.count { s -> s.toString() == "(" } != n.count { s ->
+        s.toString() == ")"
+    } -> false
+
+    n.count { s -> s.toString() == "+" } > 1 -> false
+    n.indexOfFirst { c -> c.toString() == "+" } > 0 -> false
+    n.contains(Regex("""[^\d+)(\- ]""")) -> false
+    else -> true
 }
 
+fun isPlusThere(n: String): Boolean = n[0].toString() == "+"
 fun flattenPhoneNumber(phone: String): String {
-    var plu = ""
-    if ("()" in phone || phone.contains("\n")) return ""
-    val subst: String
-    try {
-        if (phone[0].toString() == "+") {
-            subst = plu + spl(phone)
-            plu = "+"
-        } else subst = spl(phone)
-    } catch (e: StringIndexOutOfBoundsException) {
-        return ""
+    return if (!chec(phone)) "" else {
+        if (isPlusThere(phone)) "+" + spl(phone) else spl(phone)
     }
-    return if (plu.isNotBlank()) {
-        if (chec(subst) != "") plu + subst else ""
-    } else if (chec(subst) != "") subst else ""
 }
 
 /**
