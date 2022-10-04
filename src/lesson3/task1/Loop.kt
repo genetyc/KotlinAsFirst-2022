@@ -91,19 +91,15 @@ fun digitNumber(n: Int): Int {
  * Ряд Фибоначчи определён следующим образом: fib(1) = 1, fib(2) = 1, fib(n+2) = fib(n) + fib(n+1)
  */
 fun fib(n: Int): Int {
-    var fCurrent = 1
-    var fPrev: Int
-    var sum = 2
-    for (i in 4..n) {
-        fPrev = fCurrent
-        fCurrent = sum
-        sum = fPrev + fCurrent
+    var fir = 0
+    var sec: Int
+    var thir = 1
+    for (i in 2..n) {
+        sec = fir
+        fir = thir
+        thir = sec + fir
     }
-    return when (n) {
-        1 -> 1
-        2 -> 1
-        else -> sum
-    }
+    return thir
 }
 
 /**
@@ -289,17 +285,15 @@ fun cos(x: Double, eps: Double): Double {
 fun squareSequenceDigit(n: Int): Int {
     var count = 1
     var sq = 1
-    var ans = 0
     do {
         val ii = sq * sq
         for (i in splittin(ii).reversed()) {
-            ans = i
             count++
-            if (count > n) return ans
+            if (count > n) return i
         }
         sq++
     } while (count <= n)
-    return ans
+    return 1
 }
 
 /**
@@ -312,25 +306,18 @@ fun squareSequenceDigit(n: Int): Int {
  * Использовать операции со строками в этой задаче запрещается.
  */
 fun fibSequenceDigit(n: Int): Int {
-    var fCurrent = 1
-    var fPrev: Int
-    var sum = 2
-    var count = 4
-    var ans = 0
+    var fir = 0
+    var sec: Int
+    var thir = 1
+    var count = 2
     do {
-        fPrev = fCurrent
-        fCurrent = sum
-        sum = fPrev + fCurrent
-        for (i in splittin(sum).reversed()) {
-            ans = i
+        sec = fir
+        fir = thir
+        thir = sec + fir
+        for (i in splittin(thir).reversed()) {
             count++
-            if (count > n) break
+            if (count > n) return i
         }
     } while (count <= n)
-    return when (n) {
-        1 -> 1
-        2 -> 1
-        3 -> 2
-        else -> ans
-    }
+    return 1
 }

@@ -3,9 +3,11 @@
 package lesson4.task1
 
 import lesson1.task1.discriminant
+import lesson1.task1.sqr
 import kotlin.math.sqrt
 import lesson3.task1.pow
 import lesson3.task1.splittin
+import lesson3.task1.isPrime
 
 // Урок 4: списки
 // Максимальное количество баллов = 12
@@ -122,7 +124,7 @@ fun buildSumExample(list: List<Int>) = list.joinToString(separator = " + ", post
  * по формуле abs = sqrt(a1^2 + a2^2 + ... + aN^2).
  * Модуль пустого вектора считать равным 0.0.
  */
-fun abs(v: List<Double>): Double = sqrt(v.fold(0.0) { sum, element -> sum + element * element })
+fun abs(v: List<Double>): Double = sqrt(v.fold(0.0) { sum, element -> sum + sqr(element) })
 
 /**
  * Простая (2 балла)
@@ -132,7 +134,7 @@ fun abs(v: List<Double>): Double = sqrt(v.fold(0.0) { sum, element -> sum + elem
 fun mean(list: List<Double>): Double {
     return when (list.isEmpty()) {
         true -> 0.0
-        false -> (list.fold(0.0) { sum, element -> sum + element }) / list.size.toDouble()
+        false -> list.sum() / list.size.toDouble()
     }
 }
 
@@ -145,7 +147,7 @@ fun mean(list: List<Double>): Double {
  * Обратите внимание, что данная функция должна изменять содержание списка list, а не его копии.
  */
 fun center(list: MutableList<Double>): MutableList<Double> {
-    val sr = (list.fold(0.0) { sum, element -> sum + element }) / list.size.toDouble()
+    val sr = mean(list)
     for (i in 0 until list.size) {
         list[i] -= sr
     }
@@ -212,7 +214,6 @@ fun accumulate(list: MutableList<Int>): MutableList<Int> {
  * Результат разложения вернуть в виде списка множителей, например 75 -> (3, 5, 5).
  * Множители в списке должны располагаться по возрастанию.
  */
-fun isPrime(n: Int) = n >= 2 && (2..n / 2).all { n % it != 0 }
 fun factorize(n: Int): List<Int> {
     val lis2 = mutableListOf<Int>()
     var nn = n
@@ -237,7 +238,8 @@ fun factorize(n: Int): List<Int> {
  * Результат разложения вернуть в виде строки, например 75 -> 3*5*5
  * Множители в результирующей строке должны располагаться по возрастанию.
  */
-fun factorizeToString(n: Int): String = factorize(n).sorted().joinToString(separator = "*")
+fun factorizeToString(n: Int): String = factorize(n).sorted()
+    .joinToString(separator = "*")
 
 /**
  * Средняя (3 балла)
@@ -327,9 +329,18 @@ fun decimalFromString(str: String, base: Int): Int {
  * Например: 23 = XXIII, 44 = XLIV, 100 = C
  */
 fun roman(n: Int): String {
-    val ones = listOf("", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX")
-    val tens = listOf("", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC")
-    val hund = listOf("", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM")
+    val ones = listOf(
+        "", "I", "II", "III", "IV", "V", "VI", "VII", "VIII",
+        "IX"
+    )
+    val tens = listOf(
+        "", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX",
+        "XC"
+    )
+    val hund = listOf(
+        "", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC",
+        "CM"
+    )
     val ks = listOf("", "M", "MM", "MMM")
     var lis = ""
     lis += (ks[n / 1000])
@@ -346,104 +357,94 @@ fun roman(n: Int): String {
  * Например, 375 = "триста семьдесят пять",
  * 23964 = "двадцать три тысячи девятьсот шестьдесят четыре"
  */
+fun repl(n: String): String = n.trim()
+    .replace("   ", " ").replace("  ", " ")
+
 fun russian(n: Int): String {
     val lis = splittin(n).reversed()
-    fun ones(n: Int): String {
-        return when (n) {
-            1 -> "один"
-            2 -> "два"
-            3 -> "три"
-            4 -> "четыре"
-            5 -> "пять"
-            6 -> "шесть"
-            7 -> "семь"
-            8 -> "восемь"
-            9 -> "девять"
-            else -> ""
-        }
+    fun ones(n: Int): String = when (n) {
+        1 -> "один"
+        2 -> "два"
+        3 -> "три"
+        4 -> "четыре"
+        5 -> "пять"
+        6 -> "шесть"
+        7 -> "семь"
+        8 -> "восемь"
+        9 -> "девять"
+        else -> ""
     }
 
-    fun onesTh(n: Int): String {
-        return when (n) {
-            1 -> "одна тысяча"
-            2 -> "две тысячи"
-            3 -> "три тысячи"
-            4 -> "четыре тысячи"
-            5 -> "пять тысяч"
-            6 -> "шесть тысяч"
-            7 -> "семь тысяч"
-            8 -> "восемь тысяч"
-            9 -> "девять тысяч"
-            else -> "тысяч"
-        }
+    fun onesTh(n: Int): String = when (n) {
+        1 -> "одна тысяча"
+        2 -> "две тысячи"
+        3 -> "три тысячи"
+        4 -> "четыре тысячи"
+        5 -> "пять тысяч"
+        6 -> "шесть тысяч"
+        7 -> "семь тысяч"
+        8 -> "восемь тысяч"
+        9 -> "девять тысяч"
+        else -> "тысяч"
     }
 
-    fun hund(n: Int): String {
-        return when (n) {
-            1 -> "сто"
-            2 -> "двести"
-            3 -> "триста"
-            4 -> "четыреста"
-            5 -> "пятьсот"
-            6 -> "шестьсот"
-            7 -> "семьсот"
-            8 -> "восемьсот"
-            9 -> "девятьсот"
-            else -> ""
-        }
+    fun hund(n: Int): String = when (n) {
+        1 -> "сто"
+        2 -> "двести"
+        3 -> "триста"
+        4 -> "четыреста"
+        5 -> "пятьсот"
+        6 -> "шестьсот"
+        7 -> "семьсот"
+        8 -> "восемьсот"
+        9 -> "девятьсот"
+        else -> ""
     }
 
-    fun tens(n: Int): String {
-        return when (n) {
-            2 -> "двадцать"
-            3 -> "тридцать"
-            4 -> "сорок"
-            5 -> "пятьдесят"
-            6 -> "шестьдесят"
-            7 -> "семьдесят"
-            8 -> "восемьдесят"
-            9 -> "девяносто"
-            else -> ""
-        }
+    fun tens(n: Int): String = when (n) {
+        2 -> "двадцать"
+        3 -> "тридцать"
+        4 -> "сорок"
+        5 -> "пятьдесят"
+        6 -> "шестьдесят"
+        7 -> "семьдесят"
+        8 -> "восемьдесят"
+        9 -> "девяносто"
+        else -> ""
     }
 
-    fun tensOnes(n: Int): String {
-        return when (n) {
-            1 -> "десять"
-            2 -> "одиннадцать"
-            3 -> "двенадцать"
-            4 -> "тринадцать"
-            5 -> "четырнадцать"
-            6 -> "пятнадцать"
-            7 -> "шестнадцать"
-            8 -> "семнадцать"
-            9 -> "восемнадцать"
-            else -> "девятнадцать"
-        }
+    fun tensOnes(n: Int): String = when (n) {
+        1 -> "десять"
+        2 -> "одиннадцать"
+        3 -> "двенадцать"
+        4 -> "тринадцать"
+        5 -> "четырнадцать"
+        6 -> "пятнадцать"
+        7 -> "шестнадцать"
+        8 -> "семнадцать"
+        9 -> "восемнадцать"
+        else -> "девятнадцать"
     }
 
-    fun tensOnesHunds(n: Int): String {
-        return when (n) {
-            1 -> "десять тысяч"
-            2 -> "одиннадцать тысяч"
-            3 -> "двенадцать тысяч"
-            4 -> "тринадцать тысяч"
-            5 -> "четырнадцать тысяч"
-            6 -> "пятнадцать тысяч"
-            7 -> "шестнадцать тысяч"
-            8 -> "семнадцать тысяч"
-            9 -> "восемнадцать тысяч"
-            else -> "девятнадцать тысяч"
-        }
+    fun tensOnesHunds(n: Int): String = when (n) {
+        1 -> "десять тысяч"
+        2 -> "одиннадцать тысяч"
+        3 -> "двенадцать тысяч"
+        4 -> "тринадцать тысяч"
+        5 -> "четырнадцать тысяч"
+        6 -> "пятнадцать тысяч"
+        7 -> "шестнадцать тысяч"
+        8 -> "семнадцать тысяч"
+        9 -> "восемнадцать тысяч"
+        else -> "девятнадцать тысяч"
     }
-
-    fun repl(n: String): String = n.trim().replace("   ", " ").replace("  ", " ")
     return when {
         (lis.size == 1) -> ones(lis[0])
         (lis.size == 2 && lis[0] == 1) -> tensOnes(lis[0] + lis[1])
         (lis.size == 2 && lis[0] != 1) -> "${tens(lis[0])} ${ones(lis[1])}"
 
-        (lis.size == 3 && lis[1] == 1) -> "${hund(lis[0])} ${tensOnes(lis[1] + lis[2])}".trim()
+        (lis.size == 3 && lis[1] == 1) -> (hund(lis[0]) +
+                " ${tensOnes(lis[1] + lis[2])}").trim()
             .replace("  ", " ")
 
         (lis.size == 3 && lis[1] != 1) -> repl(
@@ -478,27 +479,36 @@ fun russian(n: Int): String {
 
         (lis.size == 5 && lis[0] != 1 && lis[3] != 1) -> repl(
             "${tens(lis[0])} " +
-                    " ${onesTh(lis[1])} ${hund(lis[2])} ${tens(lis[3])} ${ones(lis[4])}"
+                    " ${onesTh(lis[1])} ${hund(lis[2])} ${tens(lis[3])}" +
+                    " ${ones(lis[4])}"
         )
 
         (lis.size == 6 && lis[1] == 1 && lis[4] == 1) -> repl(
             "${hund(lis[0])} " +
-                    "${tensOnesHunds(lis[2] + lis[1])} ${hund(lis[3])} ${tensOnes(lis[5] + lis[4])}"
+                    "${tensOnesHunds(lis[2] + lis[1])} ${hund(lis[3])} " +
+                    tensOnes(lis[5] + lis[4])
         )
 
         (lis.size == 6 && lis[1] == 1 && lis[4] != 1) -> repl(
             "${hund(lis[0])} " +
-                    "${tensOnesHunds(lis[2] + lis[1])} ${hund(lis[3])} ${tens(lis[4])} ${ones(lis[5])}"
+                    "${tensOnesHunds(lis[2] + lis[1])} ${hund(lis[3])} " +
+                    "${tens(lis[4])} ${ones(lis[5])}"
         )
 
         (lis.size == 6 && lis[1] != 1 && lis[4] == 1) -> repl(
             "${hund(lis[0])} ${tens(lis[1])}" +
-                    " ${onesTh(lis[2])} ${hund(lis[3])} ${tensOnes(lis[4] + lis[5])}"
+                    " ${onesTh(lis[2])} ${hund(lis[3])} ${
+                        tensOnes(
+                            lis[4] +
+                                    lis[5]
+                        )
+                    }"
         )
 
         else -> repl(
             "${hund(lis[0])} ${tens(lis[1])}" +
-                    " ${onesTh(lis[2])} ${hund(lis[3])} ${tens(lis[4])} ${ones(lis[5])}"
+                    " ${onesTh(lis[2])} ${hund(lis[3])} ${tens(lis[4])}" +
+                    " ${ones(lis[5])}"
         )
     }
 }
