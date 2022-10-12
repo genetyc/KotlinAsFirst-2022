@@ -179,15 +179,10 @@ fun times(a: List<Int>, b: List<Int>): Int {
  */
 fun polynom(p: List<Int>, x: Int): Int {
     var su = 0
-    return when {
-        p.isEmpty() -> 0
-        else -> {
-            for (i in p.indices) {
-                su += p[i] * pow(x, i)
-            }
-            su
-        }
+    for (i in p.indices) {
+        su += p[i] * pow(x, i)
     }
+    return su
 }
 
 /**
@@ -226,7 +221,7 @@ fun factorize(n: Int): List<Int> {
                     nn /= i
                 }
             }
-            lis2.toList()
+            lis2
         }
     }
 }
@@ -238,7 +233,7 @@ fun factorize(n: Int): List<Int> {
  * Результат разложения вернуть в виде строки, например 75 -> 3*5*5
  * Множители в результирующей строке должны располагаться по возрастанию.
  */
-fun factorizeToString(n: Int): String = factorize(n).sorted()
+fun factorizeToString(n: Int): String = factorize(n)
     .joinToString(separator = "*")
 
 /**
@@ -273,10 +268,10 @@ fun convert(n: Int, base: Int): List<Int> {
  * (например, n.toString(base) и подобные), запрещается.
  */
 fun convertToString(n: Int, base: Int): String {
-    val liss = convert(n, base).toMutableList<Any>()
+    val liss = convert(n, base).map { it.toString() }.toMutableList()
     for (i in liss.indices) {
-        if (liss[i].toString().toInt() < 10) continue else liss[i] =
-            (liss[i].toString().toInt() + 87.hashCode()).toChar()   //87 - отличие между кодом числа 10 и кодом буквы a
+        if (liss[i].toInt() >= 10) liss[i] =
+            (liss[i].toInt() + ('a' - 10).hashCode()).toChar().toString()
     }
     return liss.joinToString(separator = "")
 }
@@ -313,9 +308,11 @@ fun decimal(digits: List<Int>, base: Int): Int {
 fun decimalFromString(str: String, base: Int): Int {
     var ss = 0
     for (i in str.indices) {
-        ss += if (str[i].hashCode() - 87 < 0) ((str[i].hashCode() - 48)     //48 - разница между кодом числа 1 и его номиналом
-                * pow(base, str.length - i - 1)) else
-            ((str[i].hashCode() - 87) * pow(base, str.length - i - 1))
+        ss += if (str[i].hashCode() - (('a' - 10).hashCode()) < 0)
+            ((str[i].hashCode() - ('1' - 1).hashCode())
+                    * pow(base, str.length - i - 1)) else
+            ((str[i].hashCode() - (('a' - 10).hashCode()))
+                    * pow(base, str.length - i - 1))
     }
     return ss
 }
@@ -342,12 +339,9 @@ fun roman(n: Int): String {
         "CM"
     )
     val ks = listOf("", "M", "MM", "MMM")
-    var lis = ""
-    lis += (ks[n / 1000])
-    lis += (hund[n / 100 % 10])
-    lis += (tens[n / 10 % 10])
-    lis += (ones[n % 10])
-    return lis
+    return listOf(
+        ks[n / 1000], hund[n / 100 % 10], tens[n / 10 % 10],
+        ones[n % 10]).filter { c -> c != "" }.joinToString(separator = "")
 }
 
 /**
