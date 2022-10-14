@@ -173,9 +173,9 @@ fun whoAreInBoth(a: List<String>, b: List<String>): List<String> = a.intersect(b
 fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<String, String> {
     val ans = mapA.toMutableMap()
     for ((key, value) in mapB) {
-        if (key !in mapA.keys) ans[key] = value else {
-            ans[key] = setOf("${ans[key]}", "${mapB[key]}").joinToString(separator = ", ")
-        }
+        if (key !in mapA.keys) ans[key] = value
+        else ans[key] = setOf("${ans[key]}", "${mapB[key]}")
+            .joinToString(separator = ", ")
     }
     return ans
 }
@@ -193,8 +193,8 @@ fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<S
 fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Double> {
     val mp = mutableMapOf<String, Double>()
     for ((first, second) in stockPrices) {
-        if (first !in mp.keys) mp[first] = mutableListOf(second).average() else mp[first] =
-            listOf(mp[first]!!, second).average()
+        if (first !in mp.keys) mp[first] = mutableListOf(second).average()
+        else mp[first] = listOf(mp[first]!!, second).average()
     }
     return mp
 }
@@ -258,7 +258,8 @@ fun canBuildFrom(chars: List<Char>, word: String): Boolean {
 fun extractRepeats(list: List<String>): Map<String, Int> {
     val l1 = mutableMapOf<String, Int>()
     for (i in list) {
-        if (i !in l1.keys) l1[i] = 1 else l1[i] = l1[i]!! + 1
+        if (i !in l1.keys) l1[i] = 1
+        else l1[i] = l1[i]!! + 1
     }
     return l1.filter { it.value != 1 }
 }
@@ -389,7 +390,6 @@ fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<Strin
                 maxOf(price[i - 1] + tb[i - 1][j - mass[i - 1]], tb[i - 1][j])
         }
     }
-
     for (i in treasures.keys.size downTo 1) {
         if (tb[i - 1][capVar] != tb[i][capVar]) {
             items.add(treasures.keys.toList()[i - 1])
