@@ -99,7 +99,7 @@ fun buildWordSet(text: List<String>): MutableSet<String> {
 fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> {
     val ans = mutableMapOf<Int, MutableList<String>>()
     for ((key, value) in grades) {
-        if (ans[value] in ans.values)
+        if (value in ans)
             ans[value]?.add(key)
         else ans[value] = mutableListOf(key)
     }
@@ -191,12 +191,17 @@ fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<S
  *     -> mapOf("MSFT" to 150.0, "NFLX" to 40.0)
  */
 fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Double> {
-    val mp = mutableMapOf<String, Double>()
+    val mp = mutableMapOf<String, List<Double>>()
+    //val ls = mutableListOf<Pair< Double, Int>>()
     for ((first, second) in stockPrices) {
-        if (first !in mp.keys) mp[first] = mutableListOf(second).average()
-        else mp[first] = listOf(mp[first]!!, second).average()
+        if (first !in mp.keys) mp[first] = listOf(second)
+        else mp[first] = mp[first]!! + second
     }
-    return mp
+    val mp2 = mutableMapOf<String, Double>()
+    for (i in mp.keys) {
+        mp2[i] = mp[i]?.average()!!
+    }
+    return mp2
 }
 
 /**
@@ -220,7 +225,8 @@ fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): S
     for ((i, j) in stuff) {
         if (kind != j.first) continue
         else if (j.second < minv) {
-            minv = j.second; name = i
+            minv = j.second
+            name = i
         }
     }
     return name
@@ -235,13 +241,7 @@ fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): S
  * Например:
  *   canBuildFrom(listOf('a', 'b', 'o'), "baobab") -> true
  */
-fun canBuildFrom(chars: List<Char>, word: String): Boolean {
-    val charsLowered = chars.map { it.lowercase() }.toSet()
-    for (i in word.lowercase().toSet()) {
-        if (i.toString() !in charsLowered) return false
-    }
-    return true
-}
+fun canBuildFrom(chars: List<Char>, word: String): Boolean = chars.containsAll(word.toList())
 
 /**
  * Средняя (4 балла)

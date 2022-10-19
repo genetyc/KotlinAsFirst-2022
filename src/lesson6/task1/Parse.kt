@@ -295,7 +295,7 @@ fun plusMinus(expression: String): Int {
  * Пример: "Он пошёл в в школу" => результат 9 (индекс первого 'в')
  */
 fun firstDuplicateIndex(str: String): Int {
-    val spl = str.split(" ", ",", ".").map { it.lowercase() }
+    val spl = str.split(" ").map { it.lowercase() }
     var count = 0
     if (spl.size == 1) return -1
     for (i in 0 until spl.size - 1) {

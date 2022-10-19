@@ -131,11 +131,9 @@ fun abs(v: List<Double>): Double = sqrt(v.fold(0.0) { sum, element -> sum + sqr(
  *
  * Рассчитать среднее арифметическое элементов списка list. Вернуть 0.0, если список пуст
  */
-fun mean(list: List<Double>): Double {
-    return when (list.isEmpty()) {
-        true -> 0.0
-        false -> list.sum() / list.size.toDouble()
-    }
+fun mean(list: List<Double>): Double = when (list.isEmpty()) {
+    true -> 0.0
+    false -> list.average()
 }
 
 /**
@@ -271,7 +269,7 @@ fun convertToString(n: Int, base: Int): String {
     val liss = convert(n, base).map { it.toString() }.toMutableList()
     for (i in liss.indices) {
         if (liss[i].toInt() >= 10) liss[i] =
-            (liss[i].toInt() + ('a' - 10).hashCode()).toChar().toString()
+            (liss[i].toInt() + ('a' - 10).code).toChar().toString()
     }
     return liss.joinToString(separator = "")
 }
@@ -309,9 +307,9 @@ fun decimalFromString(str: String, base: Int): Int {
     var ss = 0
     for (i in str.indices) {
         ss += if (str[i].hashCode() - (('a' - 10).hashCode()) < 0)
-            ((str[i].hashCode() - ('1' - 1).hashCode())
+            ((str[i].hashCode() - ('1' - 1).code)
                     * pow(base, str.length - i - 1)) else
-            ((str[i].hashCode() - (('a' - 10).hashCode()))
+            ((str[i].hashCode() - (('a' - 10).code))
                     * pow(base, str.length - i - 1))
     }
     return ss
@@ -341,7 +339,8 @@ fun roman(n: Int): String {
     val ks = listOf("", "M", "MM", "MMM")
     return listOf(
         ks[n / 1000], hund[n / 100 % 10], tens[n / 10 % 10],
-        ones[n % 10]).filter { c -> c != "" }.joinToString(separator = "")
+        ones[n % 10]
+    ).filter { c -> c != "" }.joinToString(separator = "")
 }
 
 /**
