@@ -191,11 +191,10 @@ fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<S
  *     -> mapOf("MSFT" to 150.0, "NFLX" to 40.0)
  */
 fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Double> {
-    val mp = mutableMapOf<String, List<Double>>()
-    //val ls = mutableListOf<Pair< Double, Int>>()
+    val mp = mutableMapOf<String, MutableList<Double>>()
     for ((first, second) in stockPrices) {
-        if (first !in mp.keys) mp[first] = listOf(second)
-        else mp[first] = mp[first]!! + second
+        if (first in mp) mp[first]?.add(second)
+        else mp[first] = mutableListOf(second)
     }
     val mp2 = mutableMapOf<String, Double>()
     for (i in mp.keys) {
@@ -224,7 +223,7 @@ fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): S
     var name: String? = null
     for ((i, j) in stuff) {
         if (kind != j.first) continue
-        else if (j.second <= minv) {
+        if (j.second <= minv) {
             minv = j.second
             name = i
         }
@@ -242,7 +241,7 @@ fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): S
  *   canBuildFrom(listOf('a', 'b', 'o'), "baobab") -> true
  */
 fun canBuildFrom(chars: List<Char>, word: String): Boolean = chars
-    .map { it.lowercase() }.containsAll(word.toList().map { it.lowercase() })
+    .map { it.lowercase() }.containsAll(word.map { it.lowercase() })
 
 /**
  * Средняя (4 балла)
@@ -277,18 +276,12 @@ fun extractRepeats(list: List<String>): Map<String, Int> {
  * Например:
  *   hasAnagrams(listOf("тор", "свет", "рот")) -> true
  */
-fun buildUpAnagrams(firstWord: String, secondWord: String): Boolean {
-    if (firstWord.length != secondWord.length) return false
-    val word1: List<String> = firstWord.map { it.toString() }
-    val word2: List<String> = secondWord.map { it.toString() }
-    return word1.sorted() == word2.sorted()
-}
-
 fun hasAnagrams(words: List<String>): Boolean {
-    for (i in words.indices) {
-        for (j in words.indices) {
-            if (buildUpAnagrams(words[i], words[j]) && i != j)
-                return true
+    val words2: List<Pair<Set<String>, Int>> =
+        words.map { it.map { it2 -> it2.toString() }.sorted().toSet() to it.length }
+    for (i in words2.indices) {
+        for (j in words2.indices) {
+            if (words2[i] == words2[j] && i != j) return true
         }
     }
     return false
