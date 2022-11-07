@@ -306,10 +306,10 @@ fun decimal(digits: List<Int>, base: Int): Int {
 fun decimalFromString(str: String, base: Int): Int {
     var ss = 0
     for (i in str.indices) {
-        ss += if (str[i].hashCode() - (('a' - 10).hashCode()) < 0)
-            ((str[i].hashCode() - ('1' - 1).code)
+        ss += if (str[i].code - (('a' - 10).code) < 0)
+            ((str[i].code - ('1' - 1).code)
                     * pow(base, str.length - i - 1)) else
-            ((str[i].hashCode() - (('a' - 10).code))
+            ((str[i].code - (('a' - 10).code))
                     * pow(base, str.length - i - 1))
     }
     return ss
