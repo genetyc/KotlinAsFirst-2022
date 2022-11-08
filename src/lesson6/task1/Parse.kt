@@ -209,15 +209,13 @@ fun flattenPhoneNumber(phone: String): String {
  * При нарушении формата входной строки или при отсутствии в ней чисел, вернуть -1.
  */
 fun bestLongJump(jumps: String): Int {
-    return if (jumps.contains(Regex("""[^\d-% ]"""))) -1
-    else {
-        val numbers = mutableListOf(-1)
-        val j = jumps.split(" ", "%", "-")
-        for (i in j) {
-            if (i.toIntOrNull() != null) numbers.add(i.toInt())
-        }
-        return numbers.max()
+    var numbers = -1
+    for (i in jumps.split(" ", "%", "-")) {
+        if (i.isNotBlank() && !i.contains(Regex("""\D""")))
+            numbers = maxOf(i.toInt(), numbers)
+        else if (i.contains(Regex("""\D"""))) return -1
     }
+    return numbers
 }
 
 /**
@@ -232,20 +230,16 @@ fun bestLongJump(jumps: String): Int {
  * вернуть -1.
  */
 fun bestHighJump(jumps: String): Int {
-    if (jumps.contains(Regex("""[^0-9%\-+ ]"""))) return -1
-    val spl = jumps.split("+").map { it.trim() }
-    var max = -1
-    val spl2 = spl.map { it.split(" ") }
-    for (i in 0 until spl2.size - 1) {
-        if (spl2[i].last().contains(Regex("""[0-9]"""))
-            && spl2[i + 1].first().contains(Regex("""[0-9]"""))
-            || spl2[i].last().contains(Regex("""[0-9]"""))
-            && spl2[i + 1].first().contains(Regex(""""""))
-        ) {
-            max = maxOf(spl2[i].last().toInt(), max)
-        }
+    val s = jumps.split("+").map { it.trim() }
+    var mx = -1
+    s.forEach {
+        if (it.isNotEmpty()) if (!it.split(" ").last()
+                .contains(Regex("""\D"""))
+        ) mx = maxOf(
+            mx, it.split(" ").last().toInt()
+        )
     }
-    return max
+    return mx
 }
 
 /**
@@ -259,16 +253,17 @@ fun bestHighJump(jumps: String): Int {
  */
 fun plusMinus(expression: String): Int {
     val spl = expression.split(" ")
-    if (spl.first().contains(Regex("""[-+]""")) || spl.last()
-            .contains(Regex("""[-+]"""))
+    if (spl.last().contains(Regex("""[\D+-]""")) || spl.first()
+            .contains(Regex("""[+-]"""))
     ) throw IllegalArgumentException()
-    for (i in spl) if (i.contains(Regex("""[0-9]"""))
-        && i.contains(Regex("""[+-]"""))
-    ) throw IllegalArgumentException()
-    for (i in 1 until spl.size) {
-        if (spl[i].contains(Regex("""[+-]""")) && spl[i - 1].contains
-                (Regex("""[+-]""")) || spl[i].contains(Regex("""[0-9]"""))
-            && spl[i - 1].contains(Regex("""[0-9]"""))
+    for (i in 0 until spl.size - 1) {
+        if (spl[i].contains(Regex("""[^\d+-]""")))
+            throw IllegalArgumentException()
+        else if (spl[i].contains(Regex("""[-+]""")) && spl[i + 1]
+                .contains(Regex("""[-+]"""))
+        ) throw IllegalArgumentException()
+        else if (spl[i].contains(Regex("""\d""")) && spl[i + 1]
+                .contains(Regex("""\d"""))
         ) throw IllegalArgumentException()
     }
     var count = spl[0].toInt()
@@ -326,7 +321,8 @@ fun mostExpensive(description: String): String {
     var ans = ""
     for ((i, k) in mp.entries) {
         if (k > mx) {
-            mx = k; ans = i
+            mx = k
+            ans = i
         }
     }
     return ans
