@@ -80,42 +80,31 @@ fun main() {
  * Обратите внимание: некорректная с точки зрения календаря дата (например, 30.02.2009) считается неверными
  * входными данными.
  */
-fun convertToWord(str: String): Int {
+fun convertToWord(str: String): String {
     return when (str) {
-        "января" -> 1
-        "февраля" -> 2
-        "марта" -> 3
-        "апреля" -> 4
-        "мая" -> 5
-        "июня" -> 6
-        "июля" -> 7
-        "августа" -> 8
-        "сентября" -> 9
-        "октября" -> 10
-        "ноября" -> 11
-        "декабря" -> 12
-        else -> -1
+        "января" -> "01"
+        "февраля" -> "02"
+        "марта" -> "03"
+        "апреля" -> "04"
+        "мая" -> "05"
+        "июня" -> "06"
+        "июля" -> "07"
+        "августа" -> "08"
+        "сентября" -> "09"
+        "октября" -> "10"
+        "ноября" -> "11"
+        "декабря" -> "12"
+        else -> "Error"
     }
 }
 
 fun dateStrToDigit(str: String): String {
-    val lis: List<String> = str.split(" ").map { it }
-    if (lis.size != 3) return ""
-    val lis2 = mutableListOf<String>()
-    try {
-        lis2.addAll(
-            listOf(
-                "%02d".format(lis[0].toInt()),
-                "%02d".format(convertToWord(lis[1])), lis[2]
-            )
-        )
-    } catch (e: NumberFormatException) {
-        return ""
-    }
-    return when {
-        lis2[0].toInt() > daysInMonth(lis2[1].toInt(), lis[2].toInt()) -> ""
-        lis2[1].toInt() == -1 -> ""
-        else -> lis2.joinToString(separator = ".")
+    return if (!str.matches(Regex("""\d{1,2} \W+ \d{4}"""))) "" else {
+        val st = str.split(" ").toMutableList()
+        st[0] = "%02d".format(st[0].toInt())
+        st[1] = convertToWord(st[1])
+        if (st[1] == "Error" || daysInMonth(st[1].toInt(), st[2].toInt()) < st[0].toInt()) ""
+        else st.joinToString(separator = ".")
     }
 }
 
@@ -129,36 +118,27 @@ fun dateStrToDigit(str: String): String {
  * Обратите внимание: некорректная с точки зрения календаря дата (например, 30 февраля 2009) считается неверными
  * входными данными.
  */
-fun convertToNumb(str: String): Pair<String, List<Int>> {
-    val lis: List<String> = str.split(".").map { it }
-    if (lis.size != 3) return ("Error" to listOf(0))
-    try {
-        if (lis[0].toInt() > daysInMonth(lis[1].toInt(), lis[2].toInt()))
-            return ("Error" to listOf(0))
-    } catch (e: NumberFormatException) {
-        return ("Error" to listOf(0))
-    }
-    return when (lis[1]) {
-        "01" -> ("января" to lis.map { it.toInt() })
-        "02" -> ("февраля" to lis.map { it.toInt() })
-        "03" -> ("марта" to lis.map { it.toInt() })
-        "04" -> ("апреля" to lis.map { it.toInt() })
-        "05" -> ("мая" to lis.map { it.toInt() })
-        "06" -> ("июня" to lis.map { it.toInt() })
-        "07" -> ("июля" to lis.map { it.toInt() })
-        "08" -> ("августа" to lis.map { it.toInt() })
-        "09" -> ("сентября" to lis.map { it.toInt() })
-        "10" -> ("октября" to lis.map { it.toInt() })
-        "11" -> ("ноября" to lis.map { it.toInt() })
-        "12" -> ("декабря" to lis.map { it.toInt() })
-        else -> ("Error" to listOf(0))
-    }
-}
-
 fun dateDigitToStr(digital: String): String {
-    val (month, lis) = convertToNumb(digital)
-    if (month != "Error") return ("${lis[0]} $month ${lis[2]}")
-    return ""
+    if (!digital.matches(Regex("""\d{2}\.\d{2}\.\d{4}"""))) return ""
+    val dig = digital.split(".")
+    if (dig[0].toInt() == 0) return ""
+    if (dig[0].toInt() <= daysInMonth(dig[1].toInt(), dig[2].toInt()))
+        return when (dig[1].toInt()) {
+            1 -> "${dig[0].toInt()} января ${dig[2]}"
+            2 -> "${dig[0].toInt()} февраля ${dig[2]}"
+            3 -> "${dig[0].toInt()} марта ${dig[2]}"
+            4 -> "${dig[0].toInt()} апреля ${dig[2]}"
+            5 -> "${dig[0].toInt()} мая ${dig[2]}"
+            6 -> "${dig[0].toInt()} июня ${dig[2]}"
+            7 -> "${dig[0].toInt()} июля ${dig[2]}"
+            8 -> "${dig[0].toInt()} августа ${dig[2]}"
+            9 -> "${dig[0].toInt()} сентября ${dig[2]}"
+            10 -> "${dig[0].toInt()} октября ${dig[2]}"
+            11 -> "${dig[0].toInt()} ноября ${dig[2]}"
+            12 -> "${dig[0].toInt()} декабря ${dig[2]}"
+            else -> ""
+        }
+    else return ""
 }
 
 /**
@@ -175,26 +155,11 @@ fun dateDigitToStr(digital: String): String {
  *
  * PS: Дополнительные примеры работы функции можно посмотреть в соответствующих тестах.
  */
-fun spl(n: String): String = n.split(" ", "+", "(", ")", "-")
-    .joinToString(separator = "")
-
-fun chec(n: String): Boolean = when {
-    "()" in n -> false
-    n.isEmpty() -> false
-    n.count { s -> s.toString() == "(" } != n.count { s ->
-        s.toString() == ")"
-    } -> false
-
-    n.count { s -> s.toString() == "+" } > 1 -> false
-    n.indexOfFirst { c -> c.toString() == "+" } > 0 -> false
-    n.contains(Regex("""[^\d+)(\- ]""")) -> false
-    else -> true
-}
-
-fun isPlusThere(n: String): Boolean = n[0].toString() == "+"
 fun flattenPhoneNumber(phone: String): String {
-    return if (!chec(phone)) "" else {
-        if (isPlusThere(phone)) "+" + spl(phone) else spl(phone)
+    if ("()" in phone) return ""
+    return when (phone.matches(Regex("""\+?[()\d\- ]*"""))) {
+        true -> phone.split(" ", "-", "(", ")").joinToString(separator = "")
+        false -> ""
     }
 }
 
