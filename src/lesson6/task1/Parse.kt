@@ -99,11 +99,13 @@ fun convertToWord(str: String): String {
 }
 
 fun dateStrToDigit(str: String): String {
-    return if (!str.matches(Regex("""\d{1,2} \W+ \d{4}"""))) "" else {
+    return if (!str.matches(Regex("""\d{1,2} \W+ \d{1,4}"""))) ""
+    else {
         val st = str.split(" ").toMutableList()
         st[0] = "%02d".format(st[0].toInt())
         st[1] = convertToWord(st[1])
-        if (st[1] == "Error" || daysInMonth(st[1].toInt(), st[2].toInt()) < st[0].toInt()) ""
+        if (st[1] == "Error" || daysInMonth(st[1].toInt(),
+                st[2].toInt()) < st[0].toInt()) ""
         else st.joinToString(separator = ".")
     }
 }
@@ -119,7 +121,8 @@ fun dateStrToDigit(str: String): String {
  * входными данными.
  */
 fun dateDigitToStr(digital: String): String {
-    if (!digital.matches(Regex("""\d{2}\.\d{2}\.\d{4}"""))) return ""
+    if (!digital.matches(Regex("""\d{2}\.\d{2}\.\d{1,4}""")))
+        return ""
     val dig = digital.split(".")
     if (dig[0].toInt() == 0) return ""
     if (dig[0].toInt() <= daysInMonth(dig[1].toInt(), dig[2].toInt()))
@@ -155,10 +158,12 @@ fun dateDigitToStr(digital: String): String {
  *
  * PS: Дополнительные примеры работы функции можно посмотреть в соответствующих тестах.
  */
+
 fun flattenPhoneNumber(phone: String): String {
     if ("()" in phone) return ""
     return when (phone.matches(Regex("""\+?[()\d\- ]*"""))) {
-        true -> phone.split(" ", "-", "(", ")").joinToString(separator = "")
+        true -> phone.split(" ", "-", "(", ")")
+            .joinToString(separator = "")
         false -> ""
     }
 }
@@ -200,9 +205,7 @@ fun bestHighJump(jumps: String): Int {
     s.forEach {
         if (it.isNotEmpty()) if (!it.split(" ").last()
                 .contains(Regex("""\D"""))
-        ) mx = maxOf(
-            mx, it.split(" ").last().toInt()
-        )
+        ) mx = maxOf(mx, it.split(" ").last().toInt())
     }
     return mx
 }
@@ -217,32 +220,20 @@ fun bestHighJump(jumps: String): Int {
  * Про нарушении формата входной строки бросить исключение IllegalArgumentException
  */
 fun plusMinus(expression: String): Int {
-    val spl = expression.split(" ")
-    if (spl.last().contains(Regex("""[\D+-]""")) || spl.first()
-            .contains(Regex("""[+-]"""))
-    ) throw IllegalArgumentException()
-    for (i in 0 until spl.size - 1) {
-        if (spl[i].contains(Regex("""[^\d+-]""")))
-            throw IllegalArgumentException()
-        else if (spl[i].contains(Regex("""[-+]""")) && spl[i + 1]
-                .contains(Regex("""[-+]"""))
-        ) throw IllegalArgumentException()
-        else if (spl[i].contains(Regex("""\d""")) && spl[i + 1]
-                .contains(Regex("""\d"""))
-        ) throw IllegalArgumentException()
-    }
-    var count = spl[0].toInt()
-    if (spl.size == 1) return spl[0].toInt() else {
-        for (i in spl.indices) {
-            if (spl[i].contains(Regex("""[0-9]"""))) continue else {
-                when (spl[i]) {
-                    "+" -> count += spl[i + 1].toInt()
-                    else -> count -= spl[i + 1].toInt()
-                }
-            }
+    val ex = expression.split(" ")
+    val str: String
+    var sum = ex[0].toInt()
+    if (ex.size == 1 && ex[0].matches(Regex("""\d+""")))
+        return ex[0].toInt()
+    else str = ex.joinToString(separator = "")
+
+    if (Regex("""(\d+[+-])+\d+""").matches(str)) {
+        for (i in 0 until ex.size - 1) {
+            if (ex[i] == "+") sum += ex[i + 1].toInt()
+            else if (ex[i] == "-") sum -= ex[i + 1].toInt()
         }
-    }
-    return count
+    } else throw IllegalArgumentException()
+    return sum
 }
 
 /**
@@ -316,7 +307,8 @@ fun transform(n: String): Int = when (n) {
 }
 
 fun fromRoman(roman: String): Int {
-    if (roman.contains(Regex("""[^IVXLCDM]""")) || roman.isEmpty()) return -1
+    if (roman.contains(Regex("""[^IVXLCDM]""")) || roman.isEmpty())
+        return -1
     var count = 0
     val lis: List<Int> = roman.map { transform(it.toString()) }
     for (i in 0 until lis.size - 1) {
