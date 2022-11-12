@@ -99,7 +99,7 @@ fun convertToWord(str: String): String {
 }
 
 fun dateStrToDigit(str: String): String {
-    return if (!str.matches(Regex("""\d{1,2} \W+ \d{1,4}"""))) ""
+    return if (!str.matches(Regex("""\d{1,2} \W+ \d+"""))) ""
     else {
         val st = str.split(" ").toMutableList()
         st[0] = "%02d".format(st[0].toInt())
@@ -121,7 +121,7 @@ fun dateStrToDigit(str: String): String {
  * входными данными.
  */
 fun dateDigitToStr(digital: String): String {
-    if (!digital.matches(Regex("""\d{2}\.\d{2}\.\d{1,4}""")))
+    if (!digital.matches(Regex("""\d{2}\.\d{2}\.\d+""")))
         return ""
     val dig = digital.split(".")
     if (dig[0].toInt() == 0) return ""
