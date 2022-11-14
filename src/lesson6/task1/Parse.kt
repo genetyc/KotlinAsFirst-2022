@@ -268,20 +268,18 @@ fun firstDuplicateIndex(str: String): Int {
  * Все цены должны быть больше нуля либо равны нулю.
  */
 fun mostExpensive(description: String): String {
-    val spl = description.split(" ", ";").filter { it != "" }
-    val mp = mutableMapOf<String, Double>()
-    for (i in 0 until spl.size - 1 step 2) {
-        mp[spl[i]] = spl[i + 1].toDouble()
-    }
+    if (!description.matches(Regex("""(\D+\s\d+\.?\d*;?\s?)+"""))) return ""
+    val desc = description.split("; ")
     var mx = -1.0
-    var ans = ""
-    for ((i, k) in mp.entries) {
-        if (k > mx) {
-            mx = k
-            ans = i
+    var name = ""
+    desc.forEach {
+        val a = it.substringAfter(" ").toDouble()
+        if (a >= mx) {
+            mx = a
+            name = it.substringBefore(" ")
         }
     }
-    return ans
+    return name
 }
 
 /**
@@ -307,10 +305,9 @@ fun transform(n: String): Int = when (n) {
 }
 
 fun fromRoman(roman: String): Int {
-    if (roman.contains(Regex("""[^IVXLCDM]""")) || roman.isEmpty())
-        return -1
+    if (!roman.matches(Regex("""[IVXLCDM]+"""))) return -1
     var count = 0
-    val lis: List<Int> = roman.map { transform(it.toString()) }
+    val lis = roman.map { transform(it.toString()) }
     for (i in 0 until lis.size - 1) {
         if (lis[i] < lis[i + 1]) {
             count -= lis[i]
