@@ -104,8 +104,11 @@ fun dateStrToDigit(str: String): String {
         val st = str.split(" ").toMutableList()
         st[0] = "%02d".format(st[0].toInt())
         st[1] = convertToDigit(st[1])
-        if (st[1] == "Error" || daysInMonth(st[1].toInt(),
-                st[2].toInt()) < st[0].toInt()) ""
+        if (st[1] == "Error" || daysInMonth(
+                st[1].toInt(),
+                st[2].toInt()
+            ) < st[0].toInt()
+        ) ""
         else st.joinToString(separator = ".")
     }
 }
@@ -160,10 +163,10 @@ fun dateDigitToStr(digital: String): String {
  */
 
 fun flattenPhoneNumber(phone: String): String {
-    if ("()" in phone) return ""
     return when (phone.matches(Regex("""\+?(\d|\(\d|\)|-| )+"""))) {
         true -> phone.split(" ", "-", "(", ")")
             .joinToString(separator = "")
+
         false -> ""
     }
 }
@@ -179,10 +182,14 @@ fun flattenPhoneNumber(phone: String): String {
  * При нарушении формата входной строки или при отсутствии в ней чисел, вернуть -1.
  */
 fun bestLongJump(jumps: String): Int {
-    return if (!jumps.matches(Regex("""(\d+|-|%| )+"""))) -1
-    else if (!jumps.contains(Regex("""\d"""))) -1
-    else maxOf(-1, jumps.split(" ", "%", "-").filter {
-        it.isNotBlank() }.map { it.toInt() }.max())
+    var mx = -1
+    if (jumps.matches(Regex("""(\d+|-|%| )+"""))) {
+        jumps.split(" ", "%", "-").forEach {
+            if (it.matches(Regex("""\d+""")))
+                mx = maxOf(mx, it.toInt())
+        }
+    }
+    return mx
 }
 
 /**
