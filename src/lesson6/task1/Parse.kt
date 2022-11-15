@@ -185,8 +185,7 @@ fun bestLongJump(jumps: String): Int {
     var mx = -1
     if (jumps.matches(Regex("""(\d+|-|%| )+"""))) {
         jumps.split(" ", "%", "-").forEach {
-            if (it.matches(Regex("""\d+""")))
-                mx = maxOf(mx, it.toInt())
+            if (it.isNotEmpty()) mx = maxOf(mx, it.toInt())
         }
     }
     return mx
