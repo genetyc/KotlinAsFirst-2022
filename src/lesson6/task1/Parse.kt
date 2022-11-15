@@ -98,8 +98,8 @@ fun convertToDigit(str: String): String {
     }
 }
 
-fun dateStrToDigit(str: String): String {
-    return if (!str.matches(Regex("""\d{1,2} \W+ \d+"""))) ""
+fun dateStrToDigit(str: String): String =
+    if (!str.matches(Regex("""\d{1,2} \W+ \d+"""))) ""
     else {
         val st = str.split(" ").toMutableList()
         st[0] = "%02d".format(st[0].toInt())
@@ -111,7 +111,6 @@ fun dateStrToDigit(str: String): String {
         ) ""
         else st.joinToString(separator = ".")
     }
-}
 
 /**
  * Средняя (4 балла)
