@@ -80,7 +80,7 @@ fun main() {
  * Обратите внимание: некорректная с точки зрения календаря дата (например, 30.02.2009) считается неверными
  * входными данными.
  */
-fun convertToWord(str: String): String {
+fun convertToDigit(str: String): String {
     return when (str) {
         "января" -> "01"
         "февраля" -> "02"
@@ -103,7 +103,7 @@ fun dateStrToDigit(str: String): String {
     else {
         val st = str.split(" ").toMutableList()
         st[0] = "%02d".format(st[0].toInt())
-        st[1] = convertToWord(st[1])
+        st[1] = convertToDigit(st[1])
         if (st[1] == "Error" || daysInMonth(st[1].toInt(),
                 st[2].toInt()) < st[0].toInt()) ""
         else st.joinToString(separator = ".")
@@ -179,13 +179,10 @@ fun flattenPhoneNumber(phone: String): String {
  * При нарушении формата входной строки или при отсутствии в ней чисел, вернуть -1.
  */
 fun bestLongJump(jumps: String): Int {
-    var numbers = -1
-    for (i in jumps.split(" ", "%", "-")) {
-        if (i.isNotBlank() && !i.contains(Regex("""\D""")))
-            numbers = maxOf(i.toInt(), numbers)
-        else if (i.contains(Regex("""\D"""))) return -1
-    }
-    return numbers
+    return if (!jumps.matches(Regex("""(\d+|-|%| )+"""))) -1
+    else if (!jumps.contains(Regex("""\d"""))) -1
+    else maxOf(-1, jumps.split(" ", "%", "-").filter {
+        it.isNotBlank() }.map { it.toInt() }.max())
 }
 
 /**
