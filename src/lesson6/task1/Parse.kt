@@ -221,13 +221,9 @@ fun bestHighJump(jumps: String): Int {
  */
 fun plusMinus(expression: String): Int {
     val ex = expression.split(" ")
-    val str: String
+    val str = ex.joinToString(separator = "")
     var sum = ex[0].toInt()
-    if (ex.size == 1 && ex[0].matches(Regex("""\d+""")))
-        return ex[0].toInt()
-    else str = ex.joinToString(separator = "")
-
-    if (Regex("""(\d+[+-])+\d+""").matches(str)) {
+    if (Regex("""(\d+[+-]|)+\d+""").matches(str)) {
         for (i in 0 until ex.size - 1) {
             if (ex[i] == "+") sum += ex[i + 1].toInt()
             else if (ex[i] == "-") sum -= ex[i + 1].toInt()
@@ -293,20 +289,20 @@ fun mostExpensive(description: String): String {
  * Вернуть -1, если roman не является корректным римским числом
  */
 
-fun transform(n: String): Int = when (n) {
-    "I" -> 1
-    "V" -> 5
-    "X" -> 10
-    "L" -> 50
-    "C" -> 100
-    "D" -> 500
+fun transform(n: Char): Int = when (n) {
+    'I' -> 1
+    'V' -> 5
+    'X' -> 10
+    'L' -> 50
+    'C' -> 100
+    'D' -> 500
     else -> 1000
 }
 
 fun fromRoman(roman: String): Int {
     if (!roman.matches(Regex("""[IVXLCDM]+"""))) return -1
     var count = 0
-    val lis = roman.map { transform(it.toString()) }
+    val lis = roman.map { transform(it) }
     for (i in 0 until lis.size - 1) {
         if (lis[i] < lis[i + 1]) {
             count -= lis[i]
