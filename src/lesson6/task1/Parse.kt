@@ -160,15 +160,11 @@ fun dateDigitToStr(digital: String): String {
  *
  * PS: Дополнительные примеры работы функции можно посмотреть в соответствующих тестах.
  */
-
-fun flattenPhoneNumber(phone: String): String {
-    return when (phone.matches(Regex("""\+?(\d|\(\d|\)|-| )+"""))) {
-        true -> phone.split(" ", "-", "(", ")")
-            .joinToString(separator = "")
-
+fun flattenPhoneNumber(phone: String): String =
+    when (phone.matches(Regex("""\+?(\d|\(\d|\)|-| )+"""))) {
+        true -> phone.filter { it !in listOf('-', '(', ')', ' ') }
         false -> ""
     }
-}
 
 /**
  * Средняя (5 баллов)
