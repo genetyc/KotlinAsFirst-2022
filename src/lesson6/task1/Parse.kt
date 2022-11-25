@@ -276,10 +276,7 @@ fun mostExpensive(description: String): String {
             name = it.substringBefore(" ")
         }
     }
-    return when (mx) {
-        0.0 -> "Any good with price 0.0"    //котоед ожидал такого вывода при строке "1 0" на входе
-        else -> name
-    }
+    return name
 } 
 
 /**
