@@ -126,24 +126,17 @@ fun dateDigitToStr(digital: String): String {
     if (!digital.matches(Regex("""\d{2}\.\d{2}\.\d+""")))
         return ""
     val dig = digital.split(".")
-    if (dig[0].toInt() == 0) return ""
-    if (dig[0].toInt() <= daysInMonth(dig[1].toInt(), dig[2].toInt()))
-        return when (dig[1].toInt()) {
-            1 -> "${dig[0].toInt()} января ${dig[2]}"
-            2 -> "${dig[0].toInt()} февраля ${dig[2]}"
-            3 -> "${dig[0].toInt()} марта ${dig[2]}"
-            4 -> "${dig[0].toInt()} апреля ${dig[2]}"
-            5 -> "${dig[0].toInt()} мая ${dig[2]}"
-            6 -> "${dig[0].toInt()} июня ${dig[2]}"
-            7 -> "${dig[0].toInt()} июля ${dig[2]}"
-            8 -> "${dig[0].toInt()} августа ${dig[2]}"
-            9 -> "${dig[0].toInt()} сентября ${dig[2]}"
-            10 -> "${dig[0].toInt()} октября ${dig[2]}"
-            11 -> "${dig[0].toInt()} ноября ${dig[2]}"
-            12 -> "${dig[0].toInt()} декабря ${dig[2]}"
-            else -> ""
-        }
-    else return ""
+    val mont = mapOf(
+        "01" to "января", "02" to "февраля", "03" to "марта",
+        "04" to "апреля", "05" to "мая", "06" to "июня",
+        "07" to "июля", "08" to "августа", "09" to "сентября",
+        "10" to "октября", "11" to "ноября", "12" to "декабря"
+    )
+    return if (dig[0].toInt() == 0 || dig[0].toInt() >
+        daysInMonth(dig[1].toInt(), dig[2].toInt()) ||
+        dig[1] !in mont
+    ) ""
+    else "${dig[0].toInt()} ${mont[dig[1]]} ${dig[2]}"
 }
 
 /**
@@ -162,7 +155,7 @@ fun dateDigitToStr(digital: String): String {
  */
 fun flattenPhoneNumber(phone: String): String =
     when (phone.matches(Regex("""\+?(\d|\(\d|\)|-| )+"""))) {
-        true -> phone.filter { it !in listOf('-', '(', ')', ' ') }
+        true -> phone.filter { it !in "()- " }
         false -> ""
     }
 
@@ -261,7 +254,7 @@ fun firstDuplicateIndex(str: String): Int {
  * Все цены должны быть больше нуля либо равны нулю.
  */
 fun mostExpensive(description: String): String {
-    if (!description.matches(Regex("""(\S+\s\d+\.?\d*;?\s?)+"""))) return ""
+    if (!description.matches(Regex("""(.+\s\d+\.?\d*;?\s?)+"""))) return ""
     val desc = description.split("; ")
     var mx = -1.0
     var name = ""
@@ -273,7 +266,7 @@ fun mostExpensive(description: String): String {
         }
     }
     return name
-} 
+}
 
 /**
  * Сложная (6 баллов)
