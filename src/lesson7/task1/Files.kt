@@ -194,13 +194,11 @@ fun top20Words(inputName: String): Map<String, Int> {
             else if (word.isNotBlank()) ans[lowered] = 1
         }
     }
-    val ansSize = ans.size
-    return if (ansSize < 20)
-        ans.toList().sortedByDescending { (_, v) -> v }.toMap()
-                as MutableMap<String, Int>
-    else ans.toList().sortedByDescending { (_, v) -> v }
-        .subList(0, 21).toMap() as MutableMap<String, Int>
+    val ans2 = ans.toList().sortedByDescending { (_, v) -> v }
+    return if (ans2.size <= 20) ans2.toMap()
+    else ans2.toMap().filterValues { it >= ans2[19].second }
 }
+
 
 /**
  * Средняя (14 баллов)
