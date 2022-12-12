@@ -63,14 +63,13 @@ fun alignFile(inputName: String, lineLength: Int, outputName: String) {
  * Подчёркивание в середине и/или в конце строк значения не имеет.
  */
 fun deleteMarked(inputName: String, outputName: String) {
-    val wr = File(outputName).bufferedWriter()
-    File(inputName).forEachLine {
-        if (!it.startsWith("_")) {
-            wr.write(it)
-            wr.newLine()
+    File(outputName).bufferedWriter().use { wr ->
+        File(inputName).forEachLine {
+            if (!it.startsWith("_")) {
+                wr.write("$it\n")
+            }
         }
     }
-    wr.close()
 }
 
 /**
@@ -264,21 +263,17 @@ fun transliterate(inputName: String, dictionary: Map<Char, String>, outputName: 
  * Обратите внимание: данная функция не имеет возвращаемого значения
  */
 fun chooseLongestChaoticWord(inputName: String, outputName: String) {
+    val mp = mutableMapOf<String, Int>()
     var mx = -1
-    File(inputName).forEachLine {
-        if (it.length == it.lowercase().toSet().size) mx = maxOf(mx, it.length)
-    }
-    val massive = mutableListOf<String>()
-    File(outputName).bufferedWriter().use { writer ->
-        File(inputName).forEachLine {
-            if (it.length == it.lowercase().toSet().size) {
-                if (it.length == mx) {
-                    mx = it.length
-                    massive.add(it)
-                }
-            }
+    File(inputName).bufferedReader().use {
+        it.forEachLine { wr ->
+            mp[wr] = wr.lowercase().toSet().size
+            mx = maxOf(mx, wr.lowercase().toSet().size)
         }
-        writer.write(massive.joinToString(separator = ", "))
+    }
+    File(outputName).bufferedWriter().use { writer ->
+        writer.write(mp.keys.filter { it.lowercase().toSet().size == mx }
+            .joinToString(separator = ", "))
     }
 }
 
