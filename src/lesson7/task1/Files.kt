@@ -271,9 +271,10 @@ fun chooseLongestChaoticWord(inputName: String, outputName: String) {
             mx = maxOf(mx, wr.lowercase().toSet().size)
         }
     }
-    File(outputName).bufferedWriter().use { writer ->
-        writer.write(mp.keys.filter { it.lowercase().toSet().size == mx }
-            .joinToString(separator = ", "))
+    File(outputName).bufferedWriter().use {writer ->
+        writer.write(mp.keys.filter {
+            it.lowercase().toSet().size == mx && it.length == mx
+        }.joinToString(separator = ", "))
     }
 }
 
