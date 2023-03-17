@@ -2,6 +2,10 @@
 
 package lesson11.task1
 
+
+import java.lang.IndexOutOfBoundsException
+import kotlin.math.pow
+
 /**
  * Класс "полином с вещественными коэффициентами".
  *
